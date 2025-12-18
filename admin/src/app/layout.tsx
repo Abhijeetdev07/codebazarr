@@ -16,6 +16,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
     title: "CodeBazar Admin",
     description: "Admin Panel for CodeBazar",
+    icons: {
+        icon: '/fevicon.png',
+        shortcut: '/fevicon.png',
+        apple: '/fevicon.png',
+    },
 };
 
 export default function RootLayout({

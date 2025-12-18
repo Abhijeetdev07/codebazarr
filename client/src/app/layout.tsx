@@ -10,6 +10,11 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "CodeBazar - Buy & Sell Code Projects",
   description: "Marketplace for premium coding projects and templates",
+  icons: {
+    icon: '/fevicon.png',
+    shortcut: '/fevicon.png',
+    apple: '/fevicon.png',
+  },
 };
 
 export default function RootLayout({
