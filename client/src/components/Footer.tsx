@@ -1,15 +1,19 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
-import { FiGithub, FiTwitter, FiInstagram, FiLinkedin, FiMail, FiMapPin, FiPhone } from "react-icons/fi";
+import { FiGithub, FiTwitter, FiInstagram, FiLinkedin, FiMail, FiMapPin, FiPhone, FiChevronRight } from "react-icons/fi";
 
 export default function Footer() {
     const currentYear = new Date().getFullYear();
+    const [quickLinksOpen, setQuickLinksOpen] = useState(false);
+    const [categoriesOpen, setCategoriesOpen] = useState(false);
+    const [contactOpen, setContactOpen] = useState(false);
 
     return (
         <footer className="bg-gray-900 text-gray-300 pt-16 pb-8">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 mb-12">
                     {/* Brand & About */}
                     <div className="space-y-4">
                         <Link href="/" className="inline-block">
@@ -38,8 +42,15 @@ export default function Footer() {
 
                     {/* Quick Links */}
                     <div>
-                        <h3 className="text-white font-semibold text-lg mb-4">Quick Links</h3>
-                        <ul className="space-y-3">
+                        <button
+                            onClick={() => setQuickLinksOpen(!quickLinksOpen)}
+                            className="md:hidden flex items-center justify-between w-full text-white font-semibold text-lg py-2 border-b border-gray-800"
+                        >
+                            Quick Links
+                            <FiChevronRight className={`h-5 w-5 transition-transform duration-200 ${quickLinksOpen ? 'rotate-90' : ''}`} />
+                        </button>
+                        <h3 className="hidden md:block text-white font-semibold text-lg mb-4">Quick Links</h3>
+                        <ul className={`space-y-2 mb-6 md:mb-0 ${quickLinksOpen ? 'block' : 'hidden md:block'}`}>
                             <li>
                                 <Link href="/projects" className="text-gray-400 hover:text-indigo-400 transition-colors duration-200 text-sm">
                                     Explore Projects
@@ -70,8 +81,15 @@ export default function Footer() {
 
                     {/* Categories */}
                     <div>
-                        <h3 className="text-white font-semibold text-lg mb-4">Top Categories</h3>
-                        <ul className="space-y-3">
+                        <button
+                            onClick={() => setCategoriesOpen(!categoriesOpen)}
+                            className="md:hidden flex items-center justify-between w-full text-white font-semibold text-lg py-2 border-b border-gray-800"
+                        >
+                            Top Categories
+                            <FiChevronRight className={`h-5 w-5 transition-transform duration-200 ${categoriesOpen ? 'rotate-90' : ''}`} />
+                        </button>
+                        <h3 className="hidden md:block text-white font-semibold text-lg mb-4">Top Categories</h3>
+                        <ul className={`space-y-2 mb-6 md:mb-0 ${categoriesOpen ? 'block' : 'hidden md:block'}`}>
                             <li>
                                 <Link href="/projects?category=web-development" className="text-gray-400 hover:text-indigo-400 transition-colors duration-200 text-sm">
                                     Web Development
@@ -97,8 +115,15 @@ export default function Footer() {
 
                     {/* Contact */}
                     <div>
-                        <h3 className="text-white font-semibold text-lg mb-4">Contact Us</h3>
-                        <ul className="space-y-4">
+                        <button
+                            onClick={() => setContactOpen(!contactOpen)}
+                            className="md:hidden flex items-center justify-between w-full text-white font-semibold text-lg py-2 border-b border-gray-800"
+                        >
+                            Contact Us
+                            <FiChevronRight className={`h-5 w-5 transition-transform duration-200 ${contactOpen ? 'rotate-90' : ''}`} />
+                        </button>
+                        <h3 className="hidden md:block text-white font-semibold text-lg mb-4">Contact Us</h3>
+                        <ul className={`space-y-2 ${contactOpen ? 'block' : 'hidden md:block'}`}>
                             <li className="flex items-start gap-3">
                                 <FiMapPin className="h-5 w-5 text-indigo-400 mt-0.5" />
                                 <span className="text-gray-400 text-sm">123 Tech Street, Silicon Valley, CA 94025, USA</span>
