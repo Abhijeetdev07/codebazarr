@@ -107,8 +107,8 @@ export default function ProjectCard({ project, index = 0 }: ProjectCardProps) {
                         href={`/projects/${project._id}`}
                         className="flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-700 text-sm font-semibold rounded-lg hover:bg-indigo-600 hover:text-white transition-all duration-300"
                     >
-                        <FiShoppingCart className="h-4 w-4" />
-                        Buy Now
+                        <FiEye className="h-4 w-4" />
+                        View Details
                     </Link>
                 </div>
             </div>
