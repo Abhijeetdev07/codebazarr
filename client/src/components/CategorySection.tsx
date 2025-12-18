@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { categoryAPI } from "@/lib/api";
-import { FiCode, FiSmartphone, FiLayout, FiDatabase, FiServer, FiCpu, FiLayers, FiBox } from "react-icons/fi";
+import * as Icons from "react-icons/fi";
 
 interface Category {
     _id: string;
@@ -13,18 +13,6 @@ interface Category {
     icon?: string;
     projectCount?: number;
 }
-
-// Map common category names to icons (fallback if no icon provided/implemented in backend yet)
-const iconMap: { [key: string]: any } = {
-    "web development": FiCode,
-    "mobile apps": FiSmartphone,
-    "ui/ux design": FiLayout,
-    "backend": FiServer,
-    "database": FiDatabase,
-    "ai & ml": FiCpu,
-    "full stack": FiLayers,
-    "scripts": FiBox,
-};
 
 export default function CategorySection() {
     const [categories, setCategories] = useState<Category[]>([]);
@@ -81,8 +69,9 @@ export default function CategorySection() {
                 {/* <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"> */}
                 <div className="flex items-center justify-center gap-6">
                     {categories.map((category) => {
-                        // Determine icon
-                        const IconComponent = iconMap[category.name.toLowerCase()] || FiCode;
+                        // Dynamically get icon from react-icons based on backend icon field
+                        const iconName = category.icon || 'FiBox';
+                        const IconComponent = (Icons as any)[iconName] || Icons.FiBox;
 
                         return (
                             <Link

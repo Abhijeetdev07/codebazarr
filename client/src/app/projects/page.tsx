@@ -86,12 +86,14 @@ export default function ProjectsPage() {
                         <p className="text-gray-600 mt-1">Discover premium code templates and scripts</p>
                     </div>
 
-                    <button
-                        onClick={() => setShowFilters(!showFilters)}
-                        className="md:hidden flex items-center justify-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50"
-                    >
-                        <FiFilter /> Filters
-                    </button>
+                    <div className="self-start md:self-auto">
+                        <button
+                            onClick={() => setShowFilters(!showFilters)}
+                            className="md:hidden inline-flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-sm text-gray-700 font-medium hover:bg-gray-50"
+                        >
+                            <FiFilter className="h-4 w-4" /> Filters
+                        </button>
+                    </div>
                 </div>
 
                 <div className="flex flex-col md:flex-row gap-8">

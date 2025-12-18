@@ -24,8 +24,8 @@ const NAV_ITEMS = [
     { name: "Categories", href: "/dashboard/categories", icon: FiGrid },
     { name: "Banners", href: "/dashboard/banners", icon: FiImage },
     { name: "Orders", href: "/dashboard/orders", icon: FiShoppingBag },
-    { name: "Users", href: "/dashboard/users", icon: FiUsers },
-    { name: "Settings", href: "/dashboard/settings", icon: FiSettings },
+    { name: "Users", href: "/dashboard/users", icon: FiUsers, disabled: true },
+    { name: "Settings", href: "/dashboard/settings", icon: FiSettings, disabled: true },
 ];
 
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
@@ -66,6 +66,19 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                     {NAV_ITEMS.map((item) => {
                         const Icon = item.icon;
                         const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
+                        const isDisabled = item.disabled;
+
+                        if (isDisabled) {
+                            return (
+                                <div
+                                    key={item.href}
+                                    className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 cursor-not-allowed opacity-50 pointer-events-none"
+                                >
+                                    <Icon className="h-5 w-5 text-gray-600" />
+                                    <span className="font-medium">{item.name}</span>
+                                </div>
+                            );
+                        }
 
                         return (
                             <Link
