@@ -1,0 +1,129 @@
+"use client";
+
+import Link from "next/link";
+import { FiGithub, FiTwitter, FiInstagram, FiLinkedin, FiMail, FiMapPin, FiPhone } from "react-icons/fi";
+
+export default function Footer() {
+    const currentYear = new Date().getFullYear();
+
+    return (
+        <footer className="bg-gray-900 text-gray-300 pt-16 pb-8">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+                    {/* Brand & About */}
+                    <div className="space-y-4">
+                        <Link href="/" className="inline-block">
+                            <span className="text-2xl font-bold text-white bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400">
+                                CodeBazar
+                            </span>
+                        </Link>
+                        <p className="text-sm text-gray-400 leading-relaxed">
+                            The premium marketplace for high-quality coding projects, templates, and scripts. Buy, sell, and learn from the best developers in the community.
+                        </p>
+                        <div className="flex space-x-4 pt-2">
+                            <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200">
+                                <FiGithub className="h-5 w-5" />
+                            </a>
+                            <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200">
+                                <FiTwitter className="h-5 w-5" />
+                            </a>
+                            <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200">
+                                <FiInstagram className="h-5 w-5" />
+                            </a>
+                            <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200">
+                                <FiLinkedin className="h-5 w-5" />
+                            </a>
+                        </div>
+                    </div>
+
+                    {/* Quick Links */}
+                    <div>
+                        <h3 className="text-white font-semibold text-lg mb-4">Quick Links</h3>
+                        <ul className="space-y-3">
+                            <li>
+                                <Link href="/projects" className="text-gray-400 hover:text-indigo-400 transition-colors duration-200 text-sm">
+                                    Explore Projects
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="/categories" className="text-gray-400 hover:text-indigo-400 transition-colors duration-200 text-sm">
+                                    Categories
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="/sell" className="text-gray-400 hover:text-indigo-400 transition-colors duration-200 text-sm">
+                                    Become a Seller
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="/terms" className="text-gray-400 hover:text-indigo-400 transition-colors duration-200 text-sm">
+                                    Terms of Service
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="/privacy" className="text-gray-400 hover:text-indigo-400 transition-colors duration-200 text-sm">
+                                    Privacy Policy
+                                </Link>
+                            </li>
+                        </ul>
+                    </div>
+
+                    {/* Categories */}
+                    <div>
+                        <h3 className="text-white font-semibold text-lg mb-4">Top Categories</h3>
+                        <ul className="space-y-3">
+                            <li>
+                                <Link href="/projects?category=web-development" className="text-gray-400 hover:text-indigo-400 transition-colors duration-200 text-sm">
+                                    Web Development
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="/projects?category=mobile-apps" className="text-gray-400 hover:text-indigo-400 transition-colors duration-200 text-sm">
+                                    Mobile Apps
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="/projects?category=ui-kits" className="text-gray-400 hover:text-indigo-400 transition-colors duration-200 text-sm">
+                                    UI/UX Kits
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="/projects?category=scripts" className="text-gray-400 hover:text-indigo-400 transition-colors duration-200 text-sm">
+                                    Scripts & Plugins
+                                </Link>
+                            </li>
+                        </ul>
+                    </div>
+
+                    {/* Contact */}
+                    <div>
+                        <h3 className="text-white font-semibold text-lg mb-4">Contact Us</h3>
+                        <ul className="space-y-4">
+                            <li className="flex items-start gap-3">
+                                <FiMapPin className="h-5 w-5 text-indigo-400 mt-0.5" />
+                                <span className="text-gray-400 text-sm">123 Tech Street, Silicon Valley, CA 94025, USA</span>
+                            </li>
+                            <li className="flex items-center gap-3">
+                                <FiMail className="h-5 w-5 text-indigo-400" />
+                                <a href="mailto:support@codebazar.com" className="text-gray-400 hover:text-white transition-colors text-sm">support@codebazar.com</a>
+                            </li>
+                            <li className="flex items-center gap-3">
+                                <FiPhone className="h-5 w-5 text-indigo-400" />
+                                <span className="text-gray-400 text-sm">+1 (555) 123-4567</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                    <p className="text-sm text-gray-500 text-center md:text-left">
+                        &copy; {currentYear} CodeBazar. All rights reserved.
+                    </p>
+                    <p className="text-xs text-gray-600 flex items-center gap-1">
+                        Made with <span className="text-red-500">♥</span> by CodeBazar Team
+                    </p>
+                </div>
+            </div>
+        </footer>
+    );
+}
