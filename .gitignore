@@ -51,7 +51,7 @@ yarn-error.log*
 # OS
 .DS_Store
 Thumbs.db
- 
+
 # App-specific environment files
 backend/.env
 client/.env.local

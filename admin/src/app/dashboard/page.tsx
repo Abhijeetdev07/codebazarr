@@ -29,11 +29,13 @@ export default function DashboardPage() {
                     const orders = ordersRes.data.data;
                     const revenue = orders.reduce((acc: number, order: any) => acc + (order.amount || 0), 0);
 
+                    const userRoleCount = usersRes.data.data.filter((user: any) => user.role === 'user').length;
+
                     setStats(prev => ({
                         ...prev,
                         totalOrders: orders.length,
                         totalRevenue: revenue,
-                        totalUsers: usersRes.data.count || 0,
+                        totalUsers: userRoleCount,
                         totalProjects: projectsRes.data.count || 0,
                     }));
 
