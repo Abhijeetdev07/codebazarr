@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { projectAPI, categoryAPI } from "@/lib/api";
 import { Project, Category } from "@/types";
 import ProjectCard from "@/components/ProjectCard";
 import { FiSearch, FiFilter, FiX } from "react-icons/fi";
 
-export default function ProjectsPage() {
+function ProjectsContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
 
@@ -222,5 +222,26 @@ export default function ProjectsPage() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function ProjectsPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen bg-gray-50 py-8">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="animate-pulse">
+                        <div className="h-8 bg-gray-200 rounded w-1/4 mb-8"></div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {[1, 2, 3, 4, 5, 6].map((i) => (
+                                <div key={i} className="h-64 bg-gray-200 rounded-xl"></div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }>
+            <ProjectsContent />
+        </Suspense>
     );
 }
