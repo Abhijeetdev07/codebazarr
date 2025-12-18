@@ -19,7 +19,7 @@ export default function AdminLoginPage() {
         try {
             const response = await authAPI.login({ email, password });
             if (response.data.success) {
-                const responseData = response.data.data as { token: string; user: any };
+                const responseData = response.data.data as unknown as { token: string; user: any };
                 login(responseData.token, responseData.user);
             }
         } catch (error: any) {
