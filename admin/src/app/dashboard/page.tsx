@@ -169,7 +169,7 @@ export default function DashboardPage() {
                                 <YAxis stroke="#9CA3AF" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `₹${value}`} />
                                 <Tooltip
                                     contentStyle={{ backgroundColor: '#fff', borderRadius: '8px', border: '1px solid #E5E7EB', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
-                                    formatter={(value: number) => [formatCurrency(value), 'Revenue']}
+                                    formatter={(value: number | undefined) => [formatCurrency(value), 'Revenue']}
                                 />
                                 <Line type="monotone" dataKey="amount" stroke="#4F46E5" strokeWidth={3} dot={{ r: 4, fill: '#4F46E5', strokeWidth: 2, stroke: '#fff' }} activeDot={{ r: 6 }} />
                             </LineChart>
