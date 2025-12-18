@@ -1,7 +1,6 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-node_modules/
 **/node_modules/
 /.pnp
 .pnp.*
@@ -12,23 +11,17 @@ node_modules/
 !.yarn/versions
 
 # testing
-coverage/
 **/coverage/
 
 # next.js
-.next/
 **/.next/
-out/
 **/out/
 
 # production
-build/
 **/build/
-dist/
 **/dist/
 
 # misc
-.DS_Store
 *.pem
 
 # debug
@@ -42,12 +35,10 @@ yarn-error.log*
 **/.env*
 
 # vercel
-.vercel
 **/.vercel
 
 # typescript
 *.tsbuildinfo
-next-env.d.ts
 **/next-env.d.ts
 
 # IDEs
@@ -60,6 +51,16 @@ next-env.d.ts
 # OS
 .DS_Store
 Thumbs.db
+ 
+# App-specific environment files
+backend/.env
+client/.env.local
+admin/.env.local
+ 
+# App-specific node_modules (explicit)
+backend/node_modules/
+client/node_modules/
+admin/node_modules/
 
 #plan
 
