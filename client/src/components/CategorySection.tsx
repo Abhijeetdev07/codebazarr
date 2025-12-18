@@ -78,7 +78,8 @@ export default function CategorySection() {
                     </p>
                 </div>
 
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {/* <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"> */}
+                <div className="flex items-center justify-center gap-6">
                     {categories.map((category) => {
                         // Determine icon
                         const IconComponent = iconMap[category.name.toLowerCase()] || FiCode;
@@ -112,11 +113,11 @@ export default function CategorySection() {
                     })}
                 </div>
 
-                <div className="mt-12 text-center">
+                {/* <div className="mt-12 text-center">
                     <Link href="/categories" className="inline-flex items-center text-indigo-600 font-semibold hover:text-indigo-800 transition-colors">
                         View All Categories <span className="ml-2">→</span>
                     </Link>
-                </div>
+                </div> */}
             </div>
         </section>
     );
