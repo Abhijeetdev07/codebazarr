@@ -80,7 +80,7 @@ function ProjectsContent() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
                 {/* Header & Mobile Filter Toggle */}
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-8">
                     <div>
                         <h1 className="text-3xl font-bold text-gray-900">Explore Projects</h1>
                         <p className="text-gray-600 mt-1">Discover premium code templates and scripts</p>
@@ -89,17 +89,17 @@ function ProjectsContent() {
                     <div className="self-start md:self-auto">
                         <button
                             onClick={() => setShowFilters(!showFilters)}
-                            className="md:hidden inline-flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-sm text-gray-700 font-medium hover:bg-gray-50"
+                            className="lg:hidden inline-flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-sm text-gray-700 font-medium hover:bg-gray-50"
                         >
                             <FiFilter className="h-4 w-4" /> Filters
                         </button>
                     </div>
                 </div>
 
-                <div className="flex flex-col md:flex-row gap-8">
+                <div className="flex flex-col lg:flex-row gap-8">
 
                     {/* SIDEBAR FILTERS */}
-                    <aside className={`md:w-64 flex-shrink-0 space-y-8 ${showFilters ? 'block' : 'hidden md:block'}`}>
+                    <aside className={`w-full lg:w-64 flex-shrink-0 space-y-8 ${showFilters ? 'block' : 'hidden lg:block'}`}>
 
                         {/* Search */}
                         <div>
@@ -186,7 +186,7 @@ function ProjectsContent() {
                     {/* MAIN CONTENT GRID */}
                     <div className="flex-1">
                         {loading ? (
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
+                            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 justify-items-center">
                                 {[1, 2, 3, 4, 5, 6].map((i) => (
                                     <div key={i} className="w-full min-w-[300px] max-w-[350px] h-80 bg-white rounded-2xl border border-gray-200 animate-pulse"></div>
                                 ))}
@@ -211,7 +211,7 @@ function ProjectsContent() {
                                 </button>
                             </div>
                         ) : (
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
+                            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 justify-items-center">
                                 {projects.map((project, index) => (
                                     <div key={project._id} className="w-full min-w-[300px] max-w-[350px] h-full">
                                         <ProjectCard project={project} index={index} />
