@@ -67,7 +67,7 @@ export default function CategorySection() {
                 </div>
 
                 {/* <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"> */}
-                <div className="flex items-center justify-center gap-6">
+                <div className="flex overflow-x-auto pb-8 gap-6 px-4 snap-x hide-scrollbar mx-auto w-fit max-w-full">
                     {categories.map((category) => {
                         // Dynamically get icon from react-icons based on backend icon field
                         const iconName = category.icon || 'FiBox';
@@ -77,7 +77,7 @@ export default function CategorySection() {
                             <Link
                                 href={`/projects?category=${category._id}`}
                                 key={category._id}
-                                className="group relative bg-white rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-indigo-100 transform hover:-translate-y-1"
+                                className="group relative bg-white rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-indigo-100 transform hover:-translate-y-1 min-w-[200px] flex-shrink-0 snap-center"
                             >
                                 <div className="flex flex-col items-center text-center space-y-4">
                                     <div className="h-14 w-14 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-300">
@@ -85,7 +85,7 @@ export default function CategorySection() {
                                     </div>
 
                                     <div>
-                                        <h3 className="text-lg font-bold text-gray-900 group-hover:text-indigo-600 transition-colors">
+                                        <h3 className="text-lg font-bold text-gray-900 group-hover:text-indigo-600 transition-colors whitespace-nowrap">
                                             {category.name}
                                         </h3>
                                         {category.projectCount !== undefined && (
