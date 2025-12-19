@@ -4,13 +4,12 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Pagination, Navigation, EffectFade } from "swiper/modules";
+import { Autoplay, Pagination, EffectFade } from "swiper/modules";
 import { bannerAPI } from "@/lib/api";
 
 // Import Swiper styles
 import "swiper/css";
 import "swiper/css/pagination";
-import "swiper/css/navigation";
 import "swiper/css/effect-fade";
 
 interface Banner {
@@ -79,8 +78,7 @@ export default function HeroSlider() {
                     clickable: true,
                     dynamicBullets: true,
                 }}
-                navigation={true}
-                modules={[Autoplay, Pagination, Navigation, EffectFade]}
+                modules={[Autoplay, Pagination, EffectFade]}
                 className="mySwiper w-full h-full"
             >
                 {banners.map((banner) => (
@@ -130,20 +128,6 @@ export default function HeroSlider() {
           background: #ffffff;
           width: 24px;
           border-radius: 4px;
-        }
-        .swiper-button-next, .swiper-button-prev {
-          color: white;
-          opacity: 0;
-          transition: opacity 0.3s;
-          width: 30px;
-          height: 30px;
-        }
-        .swiper-button-next::after, .swiper-button-prev::after {
-          font-size: 20px;
-        }
-        .group:hover .swiper-button-next, 
-        .group:hover .swiper-button-prev {
-          opacity: 1;
         }
       `}</style>
         </div>
