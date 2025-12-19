@@ -808,3 +808,55 @@ Use Postman/Thunder Client to test APIs before frontend integration
 Implement loading states and error boundaries for better UX
 Use Next.js Image component for automatic image optimization
 Consider using React Hook Form for complex forms in admin panel
+
+
+
+
+
+
+## Error Type
+Console AxiosError
+
+## Error Message
+Network Error
+
+
+    at async checkAuth (src/context/AuthContext.tsx:36:30)
+
+## Code Frame
+  34 |
+  35 |         try {
+> 36 |             const response = await authAPI.getMe();
+     |                              ^
+  37 |             if (response.data.success) {
+  38 |                 const userData = response.data.data;
+  39 |                 // Strict Admin Check
+
+Next.js version: 16.0.10 (Turbopack)
+
+
+## Error Type
+Console AxiosError
+
+## Error Message
+Network Error
+
+
+    at async handleSubmit (src/app/login/page.tsx:20:30)
+
+## Code Frame
+  18 |
+  19 |         try {
+> 20 |             const response = await authAPI.login({ email, password });
+     |                              ^
+  21 |             if (response.data.success) {
+  22 |                 const responseData = response.data.data as unknown as { token: string; user: any };
+  23 |                 login(responseData.token, responseData.user);
+
+Next.js version: 16.0.10 (Turbopack)
+
+
+i didn't started backend server and enter id and password to login admin account
+
+this above error shows 
+why it shows explain

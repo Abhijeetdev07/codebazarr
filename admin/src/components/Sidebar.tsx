@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
+import adminLogo from "../assets/admin_logo.png";
 import {
     FiHome,
     FiBox,
@@ -48,9 +50,15 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                 lg:translate-x-0 lg:static lg:block
             `}>
                 <div className="flex h-16 items-center justify-between px-6 border-b border-gray-800">
-                    <span className="text-xl font-bold bg-gradient-to-r from-blue-400 to-indigo-500 text-transparent bg-clip-text">
-                        CodeBazar
-                    </span>
+                    <div className="relative h-10 w-32">
+                        <Image
+                            src={adminLogo}
+                            alt="CodeBazar Admin"
+                            fill
+                            className="object-contain object-left"
+                            priority
+                        />
+                    </div>
                     <button
                         onClick={onClose}
                         className="lg:hidden text-gray-400 hover:text-white"
