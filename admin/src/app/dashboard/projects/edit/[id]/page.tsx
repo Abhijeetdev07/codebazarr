@@ -174,8 +174,8 @@ export default function EditProjectPage({ params }: PageProps) {
                 {/* Basic Info */}
                 <div className="space-y-4">
                     <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">Basic Information</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="col-span-2">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        <div className="lg:col-span-2">
                             <label className="block text-sm font-medium text-gray-700 mb-1">Project Title</label>
                             <input
                                 type="text"
@@ -213,7 +213,7 @@ export default function EditProjectPage({ params }: PageProps) {
                             />
                         </div>
 
-                        <div className="col-span-2">
+                        <div className="lg:col-span-2">
                             <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
                             <textarea
                                 required
