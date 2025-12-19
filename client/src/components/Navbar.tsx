@@ -2,9 +2,11 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { FiMenu, FiX, FiLogOut } from "react-icons/fi";
+import logo from "../assets/logo.png";
 
 export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
@@ -34,16 +36,21 @@ export default function Navbar() {
 
     return (
         <nav
-            className="fixed w-full z-50 transition-all duration-300 bg-white/90 backdrop-blur-md shadow-sm border-b border-gray-100 py-3"
+            className="fixed w-full z-50 transition-all duration-300 bg-white backdrop-blur-md shadow-sm border-b border-gray-100 py-3"
         >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center">
                     {/* Logo */}
                     <div className="flex-shrink-0 flex items-center">
                         <Link href="/" className="flex items-center gap-2">
-                            <span className={`text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600`}>
-                                CodeBazar
-                            </span>
+                            <Image
+                                src={logo}
+                                alt="CodeBazar Logo"
+                                width={150}
+                                height={40}
+                                className="h-10 w-auto object-contain"
+                                priority
+                            />
                         </Link>
                     </div>
 
@@ -54,8 +61,8 @@ export default function Navbar() {
                                 key={link.name}
                                 href={link.href}
                                 className={`text-sm font-medium transition-colors duration-200 ${isActive(link.href)
-                                        ? "text-indigo-600"
-                                        : "text-gray-700 hover:text-indigo-600"
+                                    ? "text-indigo-600"
+                                    : "text-gray-700 hover:text-indigo-600"
                                     }`}
                             >
                                 {link.name}

@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { FiGithub, FiTwitter, FiInstagram, FiLinkedin, FiMail, FiMapPin, FiPhone, FiChevronRight } from "react-icons/fi";
+import logo from "../assets/logo.png";
 
 export default function Footer() {
     const currentYear = new Date().getFullYear();
@@ -16,10 +18,14 @@ export default function Footer() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
                     {/* Brand & About */}
                     <div className="space-y-4">
-                        <Link href="/" className="inline-block">
-                            <span className="text-2xl font-bold text-white bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400">
-                                CodeBazar
-                            </span>
+                        <Link href="/" className="inline-block relative">
+                            <Image
+                                src={logo}
+                                alt="CodeBazar Logo"
+                                width={150}
+                                height={40}
+                                className="h-10 w-auto object-contain"
+                            />
                         </Link>
                         <p className="text-sm text-gray-400 leading-relaxed">
                             The premium marketplace for high-quality coding projects, templates, and scripts. Buy, sell, and learn from the best developers in the community.
@@ -142,7 +148,7 @@ export default function Footer() {
 
                 <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
                     <p className="text-sm text-gray-500 text-center md:text-left">
-                        &copy; {currentYear} CodeBazar. All rights reserved.
+                        &copy; {currentYear} CodeBazarr. All rights reserved.
                     </p>
                     <p className="text-xs text-gray-600 flex items-center gap-1">
                         Made with <span className="text-red-500">♥</span> by CodeBazar Team
