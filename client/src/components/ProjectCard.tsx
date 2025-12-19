@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { FiShoppingCart, FiEye, FiExternalLink } from "react-icons/fi";
+import { FiShoppingCart, FiEye } from "react-icons/fi";
 import { Project } from "@/types";
 
 interface ProjectCardProps {
@@ -38,26 +38,7 @@ export default function ProjectCard({ project, index = 0 }: ProjectCardProps) {
                 />
 
                 {/* Overlay with Actions */}
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3 backdrop-blur-sm">
-                    <Link
-                        href={`/projects/${project._id}`}
-                        className="p-3 bg-white text-gray-900 rounded-full hover:bg-indigo-600 hover:text-white transition-all transform hover:scale-110 shadow-lg"
-                        title="View Details"
-                    >
-                        <FiEye className="h-5 w-5" />
-                    </Link>
-                    {project.demoUrl && (
-                        <a
-                            href={project.demoUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="p-3 bg-white text-gray-900 rounded-full hover:bg-indigo-600 hover:text-white transition-all transform hover:scale-110 shadow-lg"
-                            title="Live Demo"
-                        >
-                            <FiExternalLink className="h-5 w-5" />
-                        </a>
-                    )}
-                </div>
+
 
                 {/* Category Badge */}
                 <div className="absolute top-3 left-3">
