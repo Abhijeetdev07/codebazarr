@@ -186,9 +186,9 @@ function ProjectsContent() {
                     {/* MAIN CONTENT GRID */}
                     <div className="flex-1">
                         {loading ? (
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
                                 {[1, 2, 3, 4, 5, 6].map((i) => (
-                                    <div key={i} className="h-80 bg-white rounded-2xl border border-gray-200 animate-pulse"></div>
+                                    <div key={i} className="w-full min-w-[300px] max-w-[350px] h-80 bg-white rounded-2xl border border-gray-200 animate-pulse"></div>
                                 ))}
                             </div>
                         ) : error ? (
