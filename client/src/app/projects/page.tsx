@@ -211,9 +211,11 @@ function ProjectsContent() {
                                 </button>
                             </div>
                         ) : (
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
                                 {projects.map((project, index) => (
-                                    <ProjectCard key={project._id} project={project} index={index} />
+                                    <div key={project._id} className="w-full min-w-[300px] max-w-[350px] h-full">
+                                        <ProjectCard project={project} index={index} />
+                                    </div>
                                 ))}
                             </div>
                         )}
