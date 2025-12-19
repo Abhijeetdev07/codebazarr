@@ -37,14 +37,14 @@ const bannerSchema = new mongoose.Schema({
 bannerSchema.index({ order: 1, createdAt: -1 });
 
 // Static method to get active banners sorted by order
-bannerSchema.statics.getActiveBanners = async function() {
+bannerSchema.statics.getActiveBanners = async function () {
   return await this.find({ isActive: true })
     .sort({ order: 1, createdAt: -1 })
     .select('-__v');
 };
 
 // Method to toggle active status
-bannerSchema.methods.toggleActive = function() {
+bannerSchema.methods.toggleActive = function () {
   this.isActive = !this.isActive;
   return this.save();
 };

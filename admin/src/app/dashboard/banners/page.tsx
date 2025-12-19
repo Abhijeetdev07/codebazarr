@@ -37,7 +37,8 @@ export default function BannersPage() {
         try {
             const res = await bannerAPI.getAll();
             if (res.data.success) {
-                setBanners(res.data.data.sort((a, b) => a.order - b.order));
+                // Handle potential missing/null order for sorting
+                setBanners(res.data.data.sort((a, b) => (a.order || 0) - (b.order || 0)));
             }
         } catch (error) {
             toast.error("Failed to load banners");
@@ -73,7 +74,8 @@ export default function BannersPage() {
             const formData = new FormData();
             formData.append("title", title);
             formData.append("subtitle", subtitle);
-            formData.append("order", order);
+            // Default to 0 if order is empty
+            formData.append("order", order || "0");
 
             if (selectedImage) {
                 formData.append("banner", selectedImage);
@@ -85,13 +87,13 @@ export default function BannersPage() {
                 const res = await bannerAPI.update(editingBanner._id, formData);
                 if (res.data.success) {
                     toast.success("Banner updated");
-                    setBanners(banners.map(b => b._id === editingBanner._id ? res.data.data : b).sort((a, b) => a.order - b.order));
+                    setBanners(banners.map(b => b._id === editingBanner._id ? res.data.data : b).sort((a, b) => (a.order || 0) - (b.order || 0)));
                 }
             } else {
                 const res = await bannerAPI.create(formData);
                 if (res.data.success) {
                     toast.success("Banner created");
-                    setBanners([...banners, res.data.data].sort((a, b) => a.order - b.order));
+                    setBanners([...banners, res.data.data].sort((a, b) => (a.order || 0) - (b.order || 0)));
                 }
             }
             closeModal();
@@ -221,7 +223,7 @@ export default function BannersPage() {
                         <tbody className="divide-y divide-gray-100">
                             {banners.map((banner) => (
                                 <tr key={banner._id} className="hover:bg-gray-50 transition-colors">
-                                    <td className="px-6 py-4 font-medium text-gray-900">{banner.order}</td>
+                                    <td className="px-6 py-4 font-medium text-gray-900">{banner.order ?? 0}</td>
                                     <td className="px-6 py-4">
                                         <div className="h-16 w-28 rounded-lg bg-gray-100 overflow-hidden">
                                             {banner.image ? (
