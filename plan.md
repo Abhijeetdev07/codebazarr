@@ -2,7 +2,7 @@
 
 A personal e-commerce platform to showcase and sell coding projects. Users can browse projects publicly but must login to purchase. Integrated with Stripe for payments.
 
-## Technology Stack
+## Technologya stack
 
 ### Frontend (Client)
 
