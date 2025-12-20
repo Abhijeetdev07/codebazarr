@@ -73,7 +73,10 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                     </div>
                     {NAV_ITEMS.map((item) => {
                         const Icon = item.icon;
-                        const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
+                        const isActive =
+                            item.href === "/dashboard"
+                                ? pathname === "/dashboard"
+                                : pathname === item.href || pathname.startsWith(`${item.href}/`);
                         const isDisabled = item.disabled;
 
                         if (isDisabled) {

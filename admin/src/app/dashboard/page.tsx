@@ -39,7 +39,7 @@ export default function DashboardPage() {
                         totalProjects: projectsRes.data.count || 0,
                     }));
 
-                    setRecentOrders(orders.slice(0, 5));
+                    setRecentOrders(orders.slice(0, 10));
 
                     // Process Revenue Data for Chart (Last 7 days simplified)
                     // Real implementation would group by date
