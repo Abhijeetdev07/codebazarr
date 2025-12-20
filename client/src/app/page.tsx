@@ -62,9 +62,9 @@ export default function Home() {
           </div>
 
           {loading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
               {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-                <div key={i} className="h-96 bg-gray-100 rounded-2xl animate-pulse"></div>
+                <div key={i} className="w-full min-w-[300px] max-w-[350px] h-80 bg-gray-100 rounded-2xl animate-pulse"></div>
               ))}
             </div>
           ) : error ? (
@@ -83,9 +83,11 @@ export default function Home() {
               <p className="text-gray-500">Check back later for new additions!</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
               {projects.map((project, index) => (
-                <ProjectCard key={project._id} project={project} index={index} />
+                <div key={project._id} className="w-full min-w-[300px] max-w-[350px] h-full">
+                  <ProjectCard project={project} index={index} />
+                </div>
               ))}
             </div>
           )}

@@ -26,7 +26,7 @@ export default function ProjectCard({ project, index = 0 }: ProjectCardProps) {
             style={{ animationDelay: `${index * 100}ms`, animationFillMode: 'forwards' }}
         >
             {/* Image Container */}
-            <div className="relative h-48 w-full overflow-hidden bg-gray-100">
+            <div className="relative h-40 w-full overflow-hidden bg-gray-100">
                 <Image
                     src={project.images[0] || "/placeholder-project.png"}
                     alt={project.title}
@@ -49,8 +49,8 @@ export default function ProjectCard({ project, index = 0 }: ProjectCardProps) {
             </div>
 
             {/* Content */}
-            <div className="p-5 flex flex-col flex-grow">
-                <div className="mb-3">
+            <div className="p-4 flex flex-col flex-grow">
+                <div className="mb-2">
                     <h3 className="text-lg font-bold text-gray-900 line-clamp-1 group-hover:text-indigo-600 transition-colors">
                         {project.title}
                     </h3>
@@ -60,7 +60,7 @@ export default function ProjectCard({ project, index = 0 }: ProjectCardProps) {
                 </div>
 
                 {/* Technologies */}
-                <div className="flex flex-wrap gap-2 mb-4">
+                <div className="flex flex-wrap gap-2 mb-3">
                     {project.technologies.slice(0, 3).map((tech, index) => (
                         <span
                             key={index}
