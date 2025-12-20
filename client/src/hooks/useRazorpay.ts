@@ -130,6 +130,28 @@ export const useRazorpay = () => {
             const rzp1 = new window.Razorpay(options);
             rzp1.on("payment.failed", function (response: any) {
                 toast.error(response.error.description || "Payment failed");
+                // Persist failed payment attempt so admin can see it
+                const orderId =
+                    response?.error?.metadata?.order_id ||
+                    response?.error?.metadata?.razorpay_order_id ||
+                    response?.error?.metadata?.orderId;
+
+                const paymentId =
+                    response?.error?.metadata?.payment_id ||
+                    response?.error?.metadata?.razorpay_payment_id ||
+                    response?.error?.metadata?.paymentId;
+
+                if (orderId) {
+                    paymentAPI
+                        .markFailed({
+                            razorpay_order_id: orderId,
+                            razorpay_payment_id: paymentId,
+                            projectId,
+                        })
+                        .catch((err: any) => {
+                            console.error("Failed to record failed payment", err);
+                        });
+                }
                 setIsProcessing(false);
             });
             rzp1.open();

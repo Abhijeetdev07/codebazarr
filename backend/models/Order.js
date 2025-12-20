@@ -38,7 +38,7 @@ const orderSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   }
-});
+}, { timestamps: true });
 
 // Index for faster queries
 orderSchema.index({ userId: 1, purchaseDate: -1 });

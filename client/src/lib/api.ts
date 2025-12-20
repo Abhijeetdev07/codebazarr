@@ -53,6 +53,11 @@ export const paymentAPI = {
         razorpay_signature: string;
         projectId: string;
     }) => api.post('/payment/verify', paymentData),
+    markFailed: (paymentData: {
+        razorpay_order_id: string;
+        razorpay_payment_id?: string;
+        projectId?: string;
+    }) => api.post('/payment/failed', paymentData),
 };
 
 // Order APIs
