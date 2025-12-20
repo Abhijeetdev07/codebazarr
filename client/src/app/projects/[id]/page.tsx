@@ -106,10 +106,11 @@ export default function ProjectDetailsPage() {
                     <FiArrowLeft /> Back to Projects
                 </Link>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
+                <div className="flex flex-col lg:grid lg:grid-cols-3 gap-8 lg:gap-12">
 
-                    {/* LEFT COLUMN - Images */}
-                    <div className="lg:col-span-2 space-y-6">
+                    {/* LEFT COLUMN - Images and content */}
+                    <div className="lg:col-span-2 flex flex-col gap-6 order-1">
+                        {/* Images - Always first */}
                         <div className="bg-white rounded-2xl p-2 shadow-sm border border-gray-100 overflow-hidden">
                             {/* Main Slider */}
                             <Swiper
@@ -165,12 +166,78 @@ export default function ProjectDetailsPage() {
                             )}
                         </div>
 
-                        {/* Description & Details */}
-                        <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100">
-                            <h2 className="text-2xl font-bold text-gray-900 mb-6">About this project</h2>
-                            <div className="prose prose-indigo max-w-none text-gray-600 leading-relaxed whitespace-pre-line">
-                                {project.description}
+                        {/* Sidebar content - Shows here on mobile/tablet only */}
+                        <div className="lg:hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+
+                            <span className="inline-block px-3 py-1 bg-indigo-50 text-indigo-700 text-xs font-bold uppercase tracking-wider rounded-full mb-4">
+                                {project.category?.name || "Uncategorized"}
+                            </span>
+
+                            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4 leading-tight">
+                                {project.title}
+                            </h1>
+
+                            <div className="flex items-center justify-between mb-8 pb-8 border-b border-gray-100">
+                                <div>
+                                    <p className="text-sm text-gray-500 mb-1">Price</p>
+                                    <p className="text-3xl font-bold text-gray-900">{formatPrice(project.price)}</p>
+                                </div>
+                                <div className="flex flex-col items-end">
+                                    <p className="text-sm text-gray-500 mb-1">Released</p>
+                                    <div className="flex items-center gap-1 text-gray-700 font-medium">
+                                        <FiCalendar className="h-4 w-4 text-gray-400" />
+                                        <span>{formatDate(project.createdAt)}</span>
+                                    </div>
+                                </div>
                             </div>
+
+                            <div className="flex flex-wrap items-center gap-3 mb-8 justify-start">
+                                <button
+                                    onClick={handleBuyNow}
+                                    disabled={isProcessing}
+                                    className={`inline-flex items-center justify-center gap-2 py-3 px-4 bg-indigo-600 text-white font-bold text-sm rounded-xl hover:bg-indigo-700 active:transform active:scale-95 transition-all shadow-lg hover:shadow-indigo-200 whitespace-nowrap ${isProcessing ? 'opacity-70 cursor-not-allowed' : ''}`}
+                                >
+                                    {isProcessing ? (
+                                        <>
+                                            <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
+                                            Processing...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <FiShoppingCart className="h-5 w-5" /> Buy Now
+                                        </>
+                                    )}
+                                </button>
+
+                                {project.demoUrl && (
+                                    <a
+                                        href={project.demoUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center justify-center gap-2 py-3 px-4 bg-white text-gray-700 font-bold text-sm rounded-xl border-2 border-gray-200 hover:border-indigo-600 hover:text-indigo-600 active:bg-gray-50 transition-all whitespace-nowrap"
+                                    >
+                                        <FiExternalLink className="h-5 w-5" /> Live Preview
+                                    </a>
+                                )}
+                            </div>
+
+                            {/* Technologies */}
+                            <div>
+                                <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4 flex items-center gap-2">
+                                    <FiLayers className="h-4 w-4" /> Technologies
+                                </h3>
+                                <div className="flex flex-wrap gap-2">
+                                    {project.technologies.map((tech, index) => (
+                                        <span
+                                            key={index}
+                                            className="px-3 py-1.5 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg border border-gray-200"
+                                        >
+                                            {tech}
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+
                         </div>
 
                         {/* Features List */}
@@ -189,10 +256,18 @@ export default function ProjectDetailsPage() {
                                 </div>
                             </div>
                         )}
+
+                        {/* Description & Details */}
+                        <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100">
+                            <h2 className="text-2xl font-bold text-gray-900 mb-6">About this project</h2>
+                            <div className="prose prose-indigo max-w-none text-gray-600 leading-relaxed whitespace-pre-line">
+                                {project.description}
+                            </div>
+                        </div>
                     </div>
 
-                    {/* RIGHT COLUMN - Sticky Sidebar */}
-                    <div className="lg:col-span-1">
+                    {/* RIGHT COLUMN - Sticky Sidebar (Desktop only) */}
+                    <div className="hidden lg:block lg:col-span-1 order-2">
                         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 sticky top-24">
 
                             <span className="inline-block px-3 py-1 bg-indigo-50 text-indigo-700 text-xs font-bold uppercase tracking-wider rounded-full mb-4">
