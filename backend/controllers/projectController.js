@@ -214,26 +214,48 @@ exports.updateProject = async (req, res) => {
       });
     }
 
-    // Handle uploaded images
     const updateData = { ...req.body };
-    let newImages = [];
 
-    // If new images were uploaded via multer to Cloudinary
-    if (req.files && req.files.length > 0) {
-      newImages = req.files.map(file => file.path); // Cloudinary URL
-      updateData.images = newImages;
-    } else if (req.body.images) {
-      // If images are provided as URLs in the request body
-      newImages = Array.isArray(req.body.images)
-        ? req.body.images
-        : [req.body.images];
-      updateData.images = newImages;
+    const normalizeToArray = (value) => {
+      if (value === undefined || value === null) return undefined;
+      return Array.isArray(value) ? value : [value];
+    };
+
+    // Support admin form-data fields that use [] naming
+    const keptExistingImages = normalizeToArray(updateData['existingImages[]'] ?? updateData.existingImages);
+    delete updateData['existingImages[]'];
+    delete updateData.existingImages;
+
+    // Handle new images uploaded via multer to Cloudinary
+    const uploadedImages = (req.files && req.files.length > 0)
+      ? req.files.map(file => file.path)
+      : [];
+
+    // Backward compatibility: accept images URLs as request body
+    const bodyImages = normalizeToArray(updateData.images);
+
+    let finalImages;
+
+    // If client sent existingImages[] (admin edit page), that is the source of truth
+    if (keptExistingImages !== undefined) {
+      finalImages = keptExistingImages;
+    }
+
+    // If new images are uploaded, append them to whatever we're keeping
+    if (uploadedImages.length > 0) {
+      finalImages = (finalImages ?? (existingProject.images || [])).concat(uploadedImages);
+    }
+
+    // If client sent images as URLs and did NOT send existingImages[], use those as final
+    if (finalImages === undefined && bodyImages !== undefined) {
+      finalImages = bodyImages;
     }
 
     // If images are being updated, delete removed ones from Cloudinary
-    if (newImages.length > 0) {
+    if (finalImages !== undefined) {
+      updateData.images = finalImages;
       const oldImages = existingProject.images || [];
-      const imagesToDelete = oldImages.filter(img => !newImages.includes(img));
+      const imagesToDelete = oldImages.filter(img => !finalImages.includes(img));
 
       for (const imageUrl of imagesToDelete) {
         await deleteFromCloudinary(imageUrl);
@@ -241,6 +263,15 @@ exports.updateProject = async (req, res) => {
     }
 
     // Parse arrays if they come as strings (from form-data)
+    if (updateData['technologies[]'] !== undefined && updateData.technologies === undefined) {
+      updateData.technologies = normalizeToArray(updateData['technologies[]']);
+    }
+    if (updateData['features[]'] !== undefined && updateData.features === undefined) {
+      updateData.features = normalizeToArray(updateData['features[]']);
+    }
+    delete updateData['technologies[]'];
+    delete updateData['features[]'];
+
     if (typeof updateData.technologies === 'string') {
       updateData.technologies = JSON.parse(updateData.technologies);
     }
