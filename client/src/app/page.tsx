@@ -41,7 +41,7 @@ export default function Home() {
       <CategorySection />
 
       {/* Featured Projects Section */}
-      <section className="py-20 bg-gray-200">
+      <section className="py-10 bg-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
             <div>
@@ -78,7 +78,7 @@ export default function Home() {
               </button>
             </div>
           ) : projects.length === 0 ? (
-            <div className="text-center py-20 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
+            <div className="text-center py-5 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
               <h3 className="text-xl font-medium text-gray-900 mb-2">No projects found</h3>
               <p className="text-gray-500">Check back later for new additions!</p>
             </div>
