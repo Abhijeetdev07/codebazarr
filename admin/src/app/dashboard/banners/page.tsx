@@ -71,7 +71,6 @@ export default function BannersPage() {
         try {
             const formData = new FormData();
             formData.append("title", title);
-            formData.append("title", title);
 
             if (selectedImage) {
                 formData.append("banner", selectedImage);
