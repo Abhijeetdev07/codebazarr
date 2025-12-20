@@ -45,7 +45,7 @@ exports.getBannerById = async (req, res) => {
 
   } catch (error) {
     console.error('Get banner error:', error);
-    
+
     if (error.kind === 'ObjectId') {
       return res.status(404).json({
         success: false,
@@ -66,7 +66,7 @@ exports.getBannerById = async (req, res) => {
 // @access  Private/Admin
 exports.createBanner = async (req, res) => {
   try {
-    const { title, subtitle, order } = req.body;
+    const { title } = req.body;
 
     // Validate required fields
     if (!title) {
@@ -87,9 +87,7 @@ exports.createBanner = async (req, res) => {
     // Create banner with Cloudinary image URL
     const banner = await Banner.create({
       title,
-      subtitle,
-      image: req.file.path, // Cloudinary URL
-      order: order || 0
+      image: req.file.path // Cloudinary URL
     });
 
     res.status(201).json({
@@ -113,7 +111,7 @@ exports.createBanner = async (req, res) => {
 // @access  Private/Admin
 exports.updateBanner = async (req, res) => {
   try {
-    const { title, subtitle, order, isActive } = req.body;
+    const { title, isActive } = req.body;
 
     // Find existing banner
     const existingBanner = await Banner.findById(req.params.id);
@@ -128,8 +126,6 @@ exports.updateBanner = async (req, res) => {
     // Prepare update data
     const updateData = {
       title: title || existingBanner.title,
-      subtitle: subtitle !== undefined ? subtitle : existingBanner.subtitle,
-      order: order !== undefined ? order : existingBanner.order,
       isActive: isActive !== undefined ? isActive : existingBanner.isActive
     };
 

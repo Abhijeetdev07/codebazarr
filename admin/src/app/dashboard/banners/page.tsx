@@ -8,9 +8,9 @@ import toast from "react-hot-toast";
 interface Banner {
     _id: string;
     title: string;
-    subtitle: string;
+    _id: string;
+    title: string;
     image: string;
-    order: number;
     isActive: boolean;
 }
 
@@ -23,8 +23,6 @@ export default function BannersPage() {
 
     // Form State
     const [title, setTitle] = useState("");
-    const [subtitle, setSubtitle] = useState("");
-    const [order, setOrder] = useState("1");
     const [selectedImage, setSelectedImage] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string>("");
     const [existingImage, setExistingImage] = useState<string>("");
@@ -38,7 +36,7 @@ export default function BannersPage() {
             const res = await bannerAPI.getAll();
             if (res.data.success) {
                 // Handle potential missing/null order for sorting
-                setBanners(res.data.data.sort((a, b) => (a.order || 0) - (b.order || 0)));
+                setBanners(res.data.data);
             }
         } catch (error) {
             toast.error("Failed to load banners");
@@ -73,9 +71,7 @@ export default function BannersPage() {
         try {
             const formData = new FormData();
             formData.append("title", title);
-            formData.append("subtitle", subtitle);
-            // Default to 0 if order is empty
-            formData.append("order", order || "0");
+            formData.append("title", title);
 
             if (selectedImage) {
                 formData.append("banner", selectedImage);
@@ -87,13 +83,13 @@ export default function BannersPage() {
                 const res = await bannerAPI.update(editingBanner._id, formData);
                 if (res.data.success) {
                     toast.success("Banner updated");
-                    setBanners(banners.map(b => b._id === editingBanner._id ? res.data.data : b).sort((a, b) => (a.order || 0) - (b.order || 0)));
+                    setBanners(banners.map(b => b._id === editingBanner._id ? res.data.data : b));
                 }
             } else {
                 const res = await bannerAPI.create(formData);
                 if (res.data.success) {
                     toast.success("Banner created");
-                    setBanners([...banners, res.data.data].sort((a, b) => (a.order || 0) - (b.order || 0)));
+                    setBanners([...banners, res.data.data]);
                 }
             }
             closeModal();
@@ -120,15 +116,11 @@ export default function BannersPage() {
         if (banner) {
             setEditingBanner(banner);
             setTitle(banner.title);
-            setSubtitle(banner.subtitle);
-            setOrder(banner.order.toString());
             setExistingImage(banner.image);
             setImagePreview(banner.image);
         } else {
             setEditingBanner(null);
             setTitle("");
-            setSubtitle("");
-            setOrder((banners.length + 1).toString());
             setExistingImage("");
             setImagePreview("");
         }
@@ -140,8 +132,6 @@ export default function BannersPage() {
         setIsModalOpen(false);
         setEditingBanner(null);
         setTitle("");
-        setSubtitle("");
-        setOrder("1");
         setSelectedImage(null);
         setImagePreview("");
         setExistingImage("");
@@ -212,10 +202,8 @@ export default function BannersPage() {
                     <table className="w-full text-left">
                         <thead className="bg-gray-50 text-gray-500 text-xs uppercase font-medium">
                             <tr>
-                                <th className="px-6 py-4">Order</th>
                                 <th className="px-6 py-4">Image</th>
                                 <th className="px-6 py-4">Title</th>
-                                <th className="px-6 py-4">Subtitle</th>
                                 <th className="px-6 py-4">Status</th>
                                 <th className="px-6 py-4 text-right">Actions</th>
                             </tr>
@@ -223,7 +211,6 @@ export default function BannersPage() {
                         <tbody className="divide-y divide-gray-100">
                             {banners.map((banner) => (
                                 <tr key={banner._id} className="hover:bg-gray-50 transition-colors">
-                                    <td className="px-6 py-4 font-medium text-gray-900">{banner.order ?? 0}</td>
                                     <td className="px-6 py-4">
                                         <div className="h-16 w-28 rounded-lg bg-gray-100 overflow-hidden">
                                             {banner.image ? (
@@ -236,7 +223,6 @@ export default function BannersPage() {
                                         </div>
                                     </td>
                                     <td className="px-6 py-4 font-medium text-gray-900">{banner.title}</td>
-                                    <td className="px-6 py-4 text-gray-500 text-sm max-w-xs truncate">{banner.subtitle}</td>
                                     <td className="px-6 py-4">
                                         <button
                                             onClick={() => handleToggleStatus(banner._id, banner.isActive)}
@@ -293,42 +279,19 @@ export default function BannersPage() {
                         </div>
 
                         <form onSubmit={handleSubmit} className="p-6 space-y-4">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
-                                    <input
-                                        type="text"
-                                        required
-                                        value={title}
-                                        onChange={(e) => setTitle(e.target.value)}
-                                        className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
-                                        placeholder="Banner title"
-                                    />
-                                </div>
-
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Order</label>
-                                    <input
-                                        type="number"
-                                        required
-                                        min="1"
-                                        value={order}
-                                        onChange={(e) => setOrder(e.target.value)}
-                                        className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
-                                    />
-                                </div>
-                            </div>
-
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Subtitle</label>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
                                 <input
                                     type="text"
-                                    value={subtitle}
-                                    onChange={(e) => setSubtitle(e.target.value)}
+                                    required
+                                    value={title}
+                                    onChange={(e) => setTitle(e.target.value)}
                                     className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
-                                    placeholder="Optional subtitle"
+                                    placeholder="Banner title (Internal use only)"
                                 />
                             </div>
+
+
 
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">Banner Image</label>

@@ -7,21 +7,10 @@ const bannerSchema = new mongoose.Schema({
     trim: true,
     maxlength: [100, 'Title cannot be more than 100 characters']
   },
-  subtitle: {
-    type: String,
-    trim: true,
-    maxlength: [200, 'Subtitle cannot be more than 200 characters'],
-    default: ''
-  },
   image: {
     type: String,
     required: [true, 'Please provide a banner image'],
     trim: true
-  },
-  order: {
-    type: Number,
-    default: 0,
-    min: [0, 'Order cannot be negative']
   },
   isActive: {
     type: Boolean,
@@ -33,13 +22,13 @@ const bannerSchema = new mongoose.Schema({
   }
 });
 
-// Index for sorting banners by order
-bannerSchema.index({ order: 1, createdAt: -1 });
+// Index for sorting banners by createdAt
+bannerSchema.index({ createdAt: -1 });
 
-// Static method to get active banners sorted by order
+// Static method to get active banners sorted by creation date
 bannerSchema.statics.getActiveBanners = async function () {
   return await this.find({ isActive: true })
-    .sort({ order: 1, createdAt: -1 })
+    .sort({ createdAt: -1 })
     .select('-__v');
 };
 

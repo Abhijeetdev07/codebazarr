@@ -33,7 +33,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-gray-200 flex flex-col">
       {/* Hero Section */}
       <HeroSlider />
 
@@ -41,7 +41,7 @@ export default function Home() {
       <CategorySection />
 
       {/* Featured Projects Section */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
             <div>
