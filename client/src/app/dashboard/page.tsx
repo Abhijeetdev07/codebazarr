@@ -83,43 +83,19 @@ export default function DashboardPage() {
     if (!user) return null; // Prevent flash before redirect
 
     return (
-        <div className="min-h-screen bg-gray-50 py-12">
+        <div className="min-h-screen bg-gray-50 pt-4 pb-12">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
                 {/* Header Section */}
-                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-8 flex flex-col md:flex-row items-center justify-between gap-6">
-                    <div className="flex items-center gap-6 text-center md:text-left">
-                        <div className="h-20 w-20 rounded-full bg-indigo-100 flex items-center justify-center text-3xl font-bold text-indigo-600 border-4 border-indigo-50">
-                            {user.name.charAt(0).toUpperCase()}
-                        </div>
-                        <div>
-                            <h1 className="text-2xl font-bold text-gray-900">Welcome, {user.name}!</h1>
-                            <p className="text-gray-500 flex items-center justify-center md:justify-start gap-2 mt-1">
-                                <FiUser className="h-4 w-4" /> {user.email}
-                            </p>
-                        </div>
-                    </div>
-
-                    <div className="flex gap-4">
-                        {user.role === 'admin' && (
-                            <Link href="/admin/dashboard" className="px-6 py-2 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-colors">
-                                Admin Panel
-                            </Link>
-                        )}
-                        <button
-                            onClick={logout}
-                            className="px-6 py-2 border border-red-200 text-red-600 font-semibold rounded-lg hover:bg-red-50 transition-colors flex items-center gap-2"
-                        >
-                            <FiLogOut /> Logout
-                        </button>
-                    </div>
+                <div className="p-2 mb-4 text-left gap-6">
+                    <h1 className="text-2xl font-bold text-gray-900">Welcome, {user.name}!</h1>
                 </div>
 
                 {/* Dashboard Content Grid */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
                     {/* Stats Cards */}
-                    <div className="lg:col-span-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                    <div className="lg:col-span-3 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-6">
                         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
                             <div className="p-4 bg-blue-50 text-blue-600 rounded-xl">
                                 <FiShoppingBag className="h-6 w-6" />
@@ -129,7 +105,7 @@ export default function DashboardPage() {
                                 <p className="text-2xl font-bold text-gray-900">{orders.length}</p>
                             </div>
                         </div>
-                        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
+                        {/* <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
                             <div className="p-4 bg-green-50 text-green-600 rounded-xl">
                                 <FiBox className="h-6 w-6" />
                             </div>
@@ -137,17 +113,17 @@ export default function DashboardPage() {
                                 <p className="text-sm text-gray-500 font-medium">Active Projects</p>
                                 <p className="text-2xl font-bold text-gray-900">{orders.length}</p>
                             </div>
-                        </div>
-                        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
+                        </div> */}
+                        {/* <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
                             <div className="p-4 bg-purple-50 text-purple-600 rounded-xl">
                                 <FiClock className="h-6 w-6" />
                             </div>
                             <div>
                                 <p className="text-sm text-gray-500 font-medium">Member Since</p>
-                                {/* createdAt is not currently in User interface in frontend context, fallback or update context later */}
+                                // createdAt is not currently in User interface in frontend context, fallback or update context later
                                 <p className="text-lg font-bold text-gray-900">Recently</p>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
 
                     {/* My Orders / Projects List */}

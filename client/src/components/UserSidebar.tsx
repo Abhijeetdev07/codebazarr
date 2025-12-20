@@ -78,10 +78,10 @@ export default function UserSidebar({ isOpen, onClose, user, onLogout }: UserSid
             >
                 <div className="flex flex-col h-full">
                     {/* Sidebar Header with User Info */}
-                    <div className="flex items-center justify-between p-6 border-b border-gray-200">
+                    <div className="flex items-center justify-between p-[12px] border-b border-gray-200">
                         {user ? (
                             <div className="flex items-center gap-3 flex-1 min-w-0">
-                                <div className="h-12 w-12 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-xl border-2 border-indigo-200 flex-shrink-0">
+                                <div className="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-xl border-2 border-indigo-200 flex-shrink-0">
                                     {user.name.charAt(0).toUpperCase()}
                                 </div>
                                 <div className="flex-1 min-w-0">
