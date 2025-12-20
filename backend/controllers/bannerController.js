@@ -24,6 +24,29 @@ exports.getAllBanners = async (req, res) => {
   }
 };
 
+// @desc    Get all banners (Admin)
+// @route   GET /api/banners/all
+// @access  Private/Admin
+exports.getAllBannersAdmin = async (req, res) => {
+  try {
+    const banners = await Banner.find().sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      count: banners.length,
+      data: banners
+    });
+
+  } catch (error) {
+    console.error('Get admin banners error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching banners',
+      error: error.message
+    });
+  }
+};
+
 // @desc    Get single banner by ID
 // @route   GET /api/banners/:id
 // @access  Public

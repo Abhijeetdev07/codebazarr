@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const {
   getAllBanners,
+  getAllBannersAdmin,
   getBannerById,
   createBanner,
   updateBanner,
@@ -14,6 +15,8 @@ const { uploadBanner } = require('../middleware/upload');
 
 // Public routes
 router.get('/', getAllBanners);
+// Admin route to get all banners (including inactive) - Must be before /:id
+router.get('/all', protect, isAdmin, getAllBannersAdmin);
 router.get('/:id', getBannerById);
 
 // Admin routes (protected)

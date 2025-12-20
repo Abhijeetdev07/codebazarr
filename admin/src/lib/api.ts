@@ -31,7 +31,7 @@ export const categoryAPI = {
 };
 
 export const bannerAPI = {
-    getAll: () => api.get<{ success: boolean, count: number, data: any[] }>('/banners'),
+    getAll: () => api.get<{ success: boolean, count: number, data: any[] }>('/banners/all'),
     create: (data: FormData) => api.post<{ success: boolean, data: any }>('/banners', data, {
         headers: { 'Content-Type': 'multipart/form-data' }
     }),

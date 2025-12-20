@@ -1,4 +1,5 @@
 const Project = require('../models/Project');
+const { deleteFromCloudinary } = require('../middleware/upload');
 
 // @desc    Get all active projects with pagination, filtering, and search
 // @route   GET /api/projects
@@ -129,7 +130,7 @@ exports.getProjectById = async (req, res) => {
 
   } catch (error) {
     console.error('Get project error:', error);
-    
+
     // Handle invalid ObjectId
     if (error.kind === 'ObjectId') {
       return res.status(404).json({
@@ -153,14 +154,14 @@ exports.createProject = async (req, res) => {
   try {
     // Handle uploaded images
     const projectData = { ...req.body };
-    
+
     // If images were uploaded via multer to Cloudinary
     if (req.files && req.files.length > 0) {
       projectData.images = req.files.map(file => file.path); // Cloudinary URL
     } else if (req.body.images) {
       // If images are provided as URLs in the request body
-      projectData.images = Array.isArray(req.body.images) 
-        ? req.body.images 
+      projectData.images = Array.isArray(req.body.images)
+        ? req.body.images
         : [req.body.images];
     }
 
@@ -203,17 +204,40 @@ exports.createProject = async (req, res) => {
 // @access  Private/Admin
 exports.updateProject = async (req, res) => {
   try {
+    // Find existing project first to get old images
+    const existingProject = await Project.findById(req.params.id);
+
+    if (!existingProject) {
+      return res.status(404).json({
+        success: false,
+        message: 'Project not found'
+      });
+    }
+
     // Handle uploaded images
     const updateData = { ...req.body };
-    
+    let newImages = [];
+
     // If new images were uploaded via multer to Cloudinary
     if (req.files && req.files.length > 0) {
-      updateData.images = req.files.map(file => file.path); // Cloudinary URL
+      newImages = req.files.map(file => file.path); // Cloudinary URL
+      updateData.images = newImages;
     } else if (req.body.images) {
       // If images are provided as URLs in the request body
-      updateData.images = Array.isArray(req.body.images) 
-        ? req.body.images 
+      newImages = Array.isArray(req.body.images)
+        ? req.body.images
         : [req.body.images];
+      updateData.images = newImages;
+    }
+
+    // If images are being updated, delete removed ones from Cloudinary
+    if (newImages.length > 0) {
+      const oldImages = existingProject.images || [];
+      const imagesToDelete = oldImages.filter(img => !newImages.includes(img));
+
+      for (const imageUrl of imagesToDelete) {
+        await deleteFromCloudinary(imageUrl);
+      }
     }
 
     // Parse arrays if they come as strings (from form-data)
@@ -232,13 +256,6 @@ exports.updateProject = async (req, res) => {
         runValidators: true
       }
     );
-
-    if (!project) {
-      return res.status(404).json({
-        success: false,
-        message: 'Project not found'
-      });
-    }
 
     res.status(200).json({
       success: true,
@@ -261,7 +278,7 @@ exports.updateProject = async (req, res) => {
 // @access  Private/Admin
 exports.deleteProject = async (req, res) => {
   try {
-    const project = await Project.findByIdAndDelete(req.params.id);
+    const project = await Project.findById(req.params.id);
 
     if (!project) {
       return res.status(404).json({
@@ -269,6 +286,15 @@ exports.deleteProject = async (req, res) => {
         message: 'Project not found'
       });
     }
+
+    // Delete images from Cloudinary
+    if (project.images && project.images.length > 0) {
+      for (const imageUrl of project.images) {
+        await deleteFromCloudinary(imageUrl);
+      }
+    }
+
+    await Project.findByIdAndDelete(req.params.id);
 
     res.status(200).json({
       success: true,

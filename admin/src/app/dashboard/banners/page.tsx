@@ -225,13 +225,14 @@ export default function BannersPage() {
                                     <td className="px-6 py-4">
                                         <button
                                             onClick={() => handleToggleStatus(banner._id, banner.isActive)}
-                                            className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium transition-colors ${banner.isActive
-                                                ? 'bg-green-50 text-green-700 hover:bg-green-100'
-                                                : 'bg-red-50 text-red-700 hover:bg-red-100'
-                                                }`}
+                                            className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${banner.isActive ? 'bg-indigo-600' : 'bg-gray-200'}`}
+                                            role="switch"
+                                            aria-checked={banner.isActive}
                                         >
-                                            <span className={`h-1.5 w-1.5 rounded-full ${banner.isActive ? 'bg-green-600' : 'bg-red-600'}`}></span>
-                                            {banner.isActive ? 'Active' : 'Inactive'}
+                                            <span
+                                                aria-hidden="true"
+                                                className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${banner.isActive ? 'translate-x-5' : 'translate-x-0'}`}
+                                            />
                                         </button>
                                     </td>
                                     <td className="px-6 py-4 text-right">
