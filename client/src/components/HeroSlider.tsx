@@ -78,7 +78,7 @@ export default function HeroSlider() {
                 >
                     {banners.map((banner) => (
                         <SwiperSlide key={banner._id}>
-                            <div className="relative w-full h-full">
+                            <Link href="/projects" className="relative w-full h-full block">
                                 {/* Background Image */}
                                 <div className="absolute inset-0">
                                     <Image
@@ -89,7 +89,7 @@ export default function HeroSlider() {
                                         priority
                                     />
                                 </div>
-                            </div>
+                            </Link>
                         </SwiperSlide>
                     ))}
                 </Swiper>
