@@ -17,7 +17,7 @@ export default function BannersPage() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingBanner, setEditingBanner] = useState<Banner | null>(null);
     const [saving, setSaving] = useState(false);
-
+ 
     // Form State
     const [title, setTitle] = useState("");
     const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -32,7 +32,7 @@ export default function BannersPage() {
         try {
             const res = await bannerAPI.getAll();
             if (res.data.success) {
-                // Handle potential missing/null order for sorting
+                // Handle potential missing/null order for sorting this errors
                 setBanners(res.data.data);
             }
         } catch (error) {

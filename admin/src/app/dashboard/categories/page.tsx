@@ -25,7 +25,7 @@ export default function CategoriesPage() {
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [icon, setIcon] = useState("FiBox"); // Default icon
-    const [slug, setSlug] = useState(""); // User requested slug in form
+    const [slug, setSlug] = useState(""); // User requested slug in form ok to see
 
     useEffect(() => {
         fetchCategories();
