@@ -11,7 +11,6 @@ interface Banner {
     image: string;
     isActive: boolean;
 }
-
 export default function BannersPage() {
     const [banners, setBanners] = useState<Banner[]>([]);
     const [loading, setLoading] = useState(true);
