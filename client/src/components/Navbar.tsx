@@ -55,7 +55,11 @@ export default function Navbar() {
                     </div>
 
                     {/* Desktop Navigation */}
+
+
+                    {/* Desktop Right Section (Links + Auth) */}
                     <div className="hidden md:flex items-center space-x-8">
+                        {/* Nav Links */}
                         {navLinks.map((link) => (
                             <Link
                                 key={link.name}
@@ -68,10 +72,7 @@ export default function Navbar() {
                                 {link.name}
                             </Link>
                         ))}
-                    </div>
 
-                    {/* Desktop Right Section (Auth) */}
-                    <div className="hidden md:flex items-center space-x-6">
                         {user ? (
                             <div className="relative group">
                                 <button className="flex items-center gap-2 text-gray-700 hover:text-indigo-600 transition-colors">
