@@ -8,8 +8,6 @@ import toast from "react-hot-toast";
 interface Banner {
     _id: string;
     title: string;
-    _id: string;
-    title: string;
     image: string;
     isActive: boolean;
 }
