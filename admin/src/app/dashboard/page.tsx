@@ -180,7 +180,7 @@ export default function DashboardPage() {
                 {/* Popular / Recent Orders */}
                 <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
                     <h3 className="text-lg font-bold text-gray-900 mb-6">Recent Orders</h3>
-                    <div className="space-y-4">
+                    <div className="space-y-4 max-h-80 overflow-y-auto no-scrollbar">
                         {recentOrders.map((order: any) => (
                             <div key={order._id} className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors border border-transparent hover:border-gray-100">
                                 <div className="flex items-center gap-3">
