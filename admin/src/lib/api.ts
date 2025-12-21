@@ -40,3 +40,8 @@ export const bannerAPI = {
     }),
     delete: (id: string) => api.delete<{ success: boolean }>(`/banners/${id}`),
 };
+
+export const reviewAPI = {
+    getAll: (params?: any) => api.get<{ success: boolean, count: number, data: any[], pagination?: any, stats?: any }>('/reviews', { params }),
+    delete: (id: string) => api.delete<{ success: boolean }>(`/reviews/${id}/admin`),
+};

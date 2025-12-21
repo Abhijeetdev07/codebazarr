@@ -5,6 +5,15 @@ export interface User {
     role: string;
 }
 
+export interface Review {
+    _id: string;
+    projectId: string;
+    userId: { _id: string; name: string } | string;
+    rating: number;
+    comment?: string;
+    createdAt: string;
+}
+
 export interface Category {
     _id: string;
     name: string;
@@ -25,6 +34,8 @@ export interface Project {
     features?: string[];
     demoUrl?: string;
     sourceCodeUrl?: string;
+    avgRating?: number;
+    reviewCount?: number;
     rating?: number;
     totalSales?: number;
     creator?: User;

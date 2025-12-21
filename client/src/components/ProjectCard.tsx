@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { FiShoppingCart, FiEye } from "react-icons/fi";
+import { FiEye, FiStar } from "react-icons/fi";
 import { Project } from "@/types";
 
 interface ProjectCardProps {
@@ -19,6 +19,9 @@ export default function ProjectCard({ project, index = 0 }: ProjectCardProps) {
             maximumFractionDigits: 0,
         }).format(price);
     };
+
+    const avgRating = project.avgRating ?? project.rating ?? 0;
+    const reviewCount = project.reviewCount ?? 0;
 
     return (
         <div
@@ -57,6 +60,18 @@ export default function ProjectCard({ project, index = 0 }: ProjectCardProps) {
                     <p className="text-sm text-gray-500 line-clamp-2 mt-1 min-h-[40px]">
                         {project.description}
                     </p>
+                </div>
+
+                <div className="flex items-center gap-2 mb-3">
+                    <div className="flex items-center gap-1">
+                        <FiStar className={`h-4 w-4 ${reviewCount > 0 ? 'text-amber-500' : 'text-gray-300'}`} />
+                        <span className="text-sm font-semibold text-gray-800">
+                            {reviewCount > 0 ? avgRating.toFixed(1) : '0.0'}
+                        </span>
+                    </div>
+                    <span className="text-xs text-gray-500">
+                        ({reviewCount} reviews)
+                    </span>
                 </div>
 
                 {/* Technologies */}

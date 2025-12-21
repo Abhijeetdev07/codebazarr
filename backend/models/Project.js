@@ -24,6 +24,17 @@ const projectSchema = new mongoose.Schema({
     min: [0, 'Price cannot be negative'],
     default: 0
   },
+  avgRating: {
+    type: Number,
+    min: [0, 'Average rating cannot be negative'],
+    max: [5, 'Average rating cannot be more than 5'],
+    default: 0
+  },
+  reviewCount: {
+    type: Number,
+    min: [0, 'Review count cannot be negative'],
+    default: 0
+  },
   images: [{
     type: String,
     required: true
@@ -65,6 +76,30 @@ projectSchema.pre('save', async function() {
   this.updatedAt = Date.now();
 });
 
+projectSchema.statics.recalculateRating = async function(projectId) {
+  const Review = mongoose.model('Review');
+
+  const stats = await Review.aggregate([
+    { $match: { projectId: new mongoose.Types.ObjectId(projectId) } },
+    {
+      $group: {
+        _id: '$projectId',
+        avgRating: { $avg: '$rating' },
+        reviewCount: { $sum: 1 }
+      }
+    }
+  ]);
+
+  const update = stats.length
+    ? {
+        avgRating: Math.round(stats[0].avgRating * 10) / 10,
+        reviewCount: stats[0].reviewCount
+      }
+    : { avgRating: 0, reviewCount: 0 };
+
+  await this.findByIdAndUpdate(projectId, update, { new: false });
+};
+
 // Update the updatedAt timestamp before updating
 projectSchema.pre('findOneAndUpdate', async function() {
   this.set({ updatedAt: Date.now() });
@@ -72,7 +107,8 @@ projectSchema.pre('findOneAndUpdate', async function() {
 
 // Virtual for formatted price
 projectSchema.virtual('formattedPrice').get(function() {
-  return `$${this.price.toFixed(2)}`;
+  const price = typeof this.price === 'number' ? this.price : 0;
+  return `$${price.toFixed(2)}`;
 });
 
 // Ensure virtuals are included when converting to JSON

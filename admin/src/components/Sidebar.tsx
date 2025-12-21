@@ -10,6 +10,7 @@ import {
     FiGrid,
     FiImage,
     FiShoppingBag,
+    FiStar,
     FiUsers,
     FiSettings,
     FiX
@@ -26,6 +27,7 @@ const NAV_ITEMS = [
     { name: "Categories", href: "/dashboard/categories", icon: FiGrid },
     { name: "Banners", href: "/dashboard/banners", icon: FiImage },
     { name: "Orders", href: "/dashboard/orders", icon: FiShoppingBag },
+    { name: "Reviews", href: "/dashboard/reviews", icon: FiStar },
     { name: "Users", href: "/dashboard/users", icon: FiUsers, disabled: true },
     { name: "Settings", href: "/dashboard/settings", icon: FiSettings, disabled: true },
 ];

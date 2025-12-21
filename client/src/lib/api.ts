@@ -65,3 +65,10 @@ export const orderAPI = {
     getMyOrders: () => api.get('/orders/my-orders'),
     getAllOrders: () => api.get('/orders'), // Admin only
 };
+
+export const reviewAPI = {
+    getByProject: (projectId: string, params?: any) => api.get(`/reviews/project/${projectId}`, { params }),
+    create: (projectId: string, payload: { rating: number; comment?: string }) => api.post(`/reviews/project/${projectId}`, payload),
+    update: (reviewId: string, payload: { rating?: number; comment?: string }) => api.put(`/reviews/${reviewId}`, payload),
+    delete: (reviewId: string) => api.delete(`/reviews/${reviewId}`),
+};

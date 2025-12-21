@@ -16,8 +16,10 @@ connectDB().then(() => {
 });
 
 // Middleware (CORS)
+const allowedOrigins = [process.env.CLIENT_URL, process.env.ADMIN_URL].filter(Boolean);
+
 app.use(cors({
-  origin: [process.env.CLIENT_URL, process.env.ADMIN_URL],
+  origin: allowedOrigins.length ? allowedOrigins : true,
   credentials: true
 }));
 
@@ -41,6 +43,7 @@ app.use('/api/categories', require('./routes/categories'));
 app.use('/api/banners', require('./routes/banners'));
 app.use('/api/payment', require('./routes/payment'));
 app.use('/api/orders', require('./routes/orders'));
+app.use('/api/reviews', require('./routes/reviews'));
 
 // Error handling middleware
 app.use(require('./middleware/error'));
