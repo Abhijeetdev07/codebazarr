@@ -66,8 +66,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 router.push("/"); // Redirect to home
             }
         } catch (error: any) {
-            const message = error.response?.data?.message || "Login failed";
-            toast.error(message);
             throw error;
         }
     };
