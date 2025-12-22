@@ -1,4 +1,6 @@
 const Project = require('../models/Project');
+const Category = require('../models/Category');
+const mongoose = require('mongoose');
 const { deleteFromCloudinary } = require('../middleware/upload');
 
 // @desc    Get all active projects with pagination, filtering, and search
@@ -14,9 +16,19 @@ exports.getAllProjects = async (req, res) => {
     // Build query
     let query = { isActive: true };
 
-    // Category filter
+    // Category filter (accepts category ObjectId or category slug)
     if (req.query.category) {
-      query.category = req.query.category;
+      const categoryParam = String(req.query.category);
+      if (mongoose.Types.ObjectId.isValid(categoryParam)) {
+        query.category = categoryParam;
+      } else {
+        const categoryDoc = await Category.findOne({ slug: categoryParam }).select('_id');
+        if (categoryDoc?._id) {
+          query.category = categoryDoc._id;
+        } else {
+          query.category = null;
+        }
+      }
     }
 
     // Search functionality (search in title, description, technologies)
