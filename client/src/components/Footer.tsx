@@ -63,13 +63,8 @@ export default function Footer() {
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/categories" className="text-gray-400 hover:text-indigo-400 transition-colors duration-200 text-sm">
-                                    Categories
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="/sell" className="text-gray-400 hover:text-indigo-400 transition-colors duration-200 text-sm">
-                                    Become a Seller
+                                <Link href="/about" className="text-gray-400 hover:text-indigo-400 transition-colors duration-200 text-sm">
+                                    About Us
                                 </Link>
                             </li>
                             <li>
