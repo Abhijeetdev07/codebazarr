@@ -74,7 +74,7 @@ export default function DashboardPage() {
         return (
             <div className="space-y-6 animate-pulse">
                 {/* Stats Cards Skeleton */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {[1, 2, 3, 4].map((i) => (
                         <div key={i} className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
                             <div className="flex items-center justify-between">
@@ -118,7 +118,7 @@ export default function DashboardPage() {
             <h1 className="text-2xl font-bold text-gray-900">Dashboard Overview</h1>
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex items-center gap-4">
                     <div className="p-4 bg-blue-50 text-blue-600 rounded-lg">
                         <FiUsers className="h-6 w-6" />
