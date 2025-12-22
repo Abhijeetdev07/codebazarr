@@ -11,6 +11,8 @@ function ProjectsContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
 
+    const isObjectId = (value: string) => /^[a-f\d]{24}$/i.test(value);
+
     const [projects, setProjects] = useState<Project[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
     const [loading, setLoading] = useState(true);
@@ -36,6 +38,39 @@ function ProjectsContent() {
         };
         fetchCategories();
     }, []);
+
+    // Canonicalize category param to slug (and fallback to All Categories if not found)
+    useEffect(() => {
+        if (categories.length === 0) return;
+
+        const categoryParam = searchParams.get("category") || "";
+        if (!categoryParam) return;
+
+        const foundBySlug = categories.find((c) => c.slug === categoryParam);
+        if (foundBySlug) {
+            if (selectedCategory !== foundBySlug.slug) {
+                setSelectedCategory(foundBySlug.slug);
+            }
+            return;
+        }
+
+        if (isObjectId(categoryParam)) {
+            const foundById = categories.find((c) => c._id === categoryParam);
+            if (foundById?.slug) {
+                setSelectedCategory(foundById.slug);
+                const params = new URLSearchParams(searchParams.toString());
+                params.set("category", foundById.slug);
+                router.replace(`/projects?${params.toString()}`, { scroll: false });
+                return;
+            }
+        }
+
+        setSelectedCategory("");
+        const params = new URLSearchParams(searchParams.toString());
+        params.delete("category");
+        const qs = params.toString();
+        router.replace(qs ? `/projects?${qs}` : "/projects", { scroll: false });
+    }, [categories, searchParams, router]);
 
     // Fetch Projects with Filters
     useEffect(() => {
@@ -65,7 +100,8 @@ function ProjectsContent() {
         const params = new URLSearchParams();
         if (searchTerm) params.set("search", searchTerm);
         if (selectedCategory) params.set("category", selectedCategory);
-        router.push(`/projects?${params.toString()}`, { scroll: false });
+        const qs = params.toString();
+        router.push(qs ? `/projects?${qs}` : "/projects", { scroll: false });
 
     }, [searchTerm, selectedCategory, sortBy, router]);
 
@@ -159,11 +195,11 @@ function ProjectsContent() {
                                         <input
                                             type="radio"
                                             name="category"
-                                            checked={selectedCategory === cat._id}
-                                            onChange={() => setSelectedCategory(cat._id)}
+                                            checked={selectedCategory === cat.slug}
+                                            onChange={() => setSelectedCategory(cat.slug)}
                                             className="w-4 h-4 text-indigo-600 border-gray-300 focus:ring-indigo-500"
                                         />
-                                        <span className={`text-sm ${selectedCategory === cat._id ? "font-semibold text-indigo-600" : "text-gray-600 group-hover:text-gray-900"}`}>
+                                        <span className={`text-sm ${selectedCategory === cat.slug ? "font-semibold text-indigo-600" : "text-gray-600 group-hover:text-gray-900"}`}>
                                             {cat.name}
                                         </span>
                                     </label>
