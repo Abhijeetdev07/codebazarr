@@ -92,23 +92,23 @@ export default function Footer() {
                         <h3 className="hidden md:block text-white font-semibold text-lg mb-4">Top Categories</h3>
                         <ul className={`space-y-2 mt-4 md:mt-0 md:mb-0 ${categoriesOpen ? 'block' : 'hidden md:block'}`}>
                             <li>
-                                <Link href="/projects?category=web-development" className="text-gray-400 hover:text-indigo-400 transition-colors duration-200 text-sm">
-                                    Web Development
+                                <Link href="/projects?category=full-stack" className="text-gray-400 hover:text-indigo-400 transition-colors duration-200 text-sm">
+                                    Full Stack
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/projects?category=mobile-apps" className="text-gray-400 hover:text-indigo-400 transition-colors duration-200 text-sm">
-                                    Mobile Apps
+                                <Link href="/projects?category=app-developement" className="text-gray-400 hover:text-indigo-400 transition-colors duration-200 text-sm">
+                                    App Developement
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/projects?category=ui-kits" className="text-gray-400 hover:text-indigo-400 transition-colors duration-200 text-sm">
-                                    UI/UX Kits
+                                <Link href="/projects?category=html-css-js" className="text-gray-400 hover:text-indigo-400 transition-colors duration-200 text-sm">
+                                    Html Css Js
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/projects?category=scripts" className="text-gray-400 hover:text-indigo-400 transition-colors duration-200 text-sm">
-                                    Scripts & Plugins
+                                <Link href="/projects?category=react-js" className="text-gray-400 hover:text-indigo-400 transition-colors duration-200 text-sm">
+                                    React js
                                 </Link>
                             </li>
                         </ul>
