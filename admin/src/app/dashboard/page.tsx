@@ -74,7 +74,7 @@ export default function DashboardPage() {
         return (
             <div className="space-y-6 animate-pulse">
                 {/* Stats Cards Skeleton */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {[1, 2, 3, 4].map((i) => (
                         <div key={i} className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
                             <div className="flex items-center justify-between">
@@ -118,9 +118,9 @@ export default function DashboardPage() {
             <h1 className="text-2xl font-bold text-gray-900">Dashboard Overview</h1>
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex items-center gap-4">
-                    <div className="p-4 bg-blue-50 text-blue-600 rounded-lg">
+                    <div className="p-4 bg-blue-50 text-blue-600 rounded-lg hidden md:block">
                         <FiUsers className="h-6 w-6" />
                     </div>
                     <div>
@@ -129,7 +129,7 @@ export default function DashboardPage() {
                     </div>
                 </div>
                 <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex items-center gap-4">
-                    <div className="p-4 bg-purple-50 text-purple-600 rounded-lg">
+                    <div className="p-4 bg-purple-50 text-purple-600 rounded-lg hidden md:block">
                         <FiBox className="h-6 w-6" />
                     </div>
                     <div>
@@ -138,7 +138,7 @@ export default function DashboardPage() {
                     </div>
                 </div>
                 <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex items-center gap-4">
-                    <div className="p-4 bg-orange-50 text-orange-600 rounded-lg">
+                    <div className="p-4 bg-orange-50 text-orange-600 rounded-lg hidden md:block">
                         <FiShoppingBag className="h-6 w-6" />
                     </div>
                     <div>
@@ -147,7 +147,7 @@ export default function DashboardPage() {
                     </div>
                 </div>
                 <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex items-center gap-4">
-                    <div className="p-4 bg-green-50 text-green-600 rounded-lg">
+                    <div className="p-4 bg-green-50 text-green-600 rounded-lg hidden md:block">
                         <FiDollarSign className="h-6 w-6" />
                     </div>
                     <div>
