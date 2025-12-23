@@ -20,9 +20,19 @@ function ProjectsContent() {
 
     // Filter States
     const [searchTerm, setSearchTerm] = useState(searchParams.get("search") || "");
+    const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchParams.get("search") || "");
     const [selectedCategory, setSelectedCategory] = useState(searchParams.get("category") || "");
     const [sortBy, setSortBy] = useState("newest");
     const [showFilters, setShowFilters] = useState(false);
+
+    // Debounce search to avoid firing requests on every keystroke
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedSearchTerm(searchTerm);
+        }, 1000);
+
+        return () => clearTimeout(timer);
+    }, [searchTerm]);
 
     // Fetch Categories
     useEffect(() => {
@@ -79,7 +89,7 @@ function ProjectsContent() {
             setError("");
             try {
                 const params: any = {};
-                if (searchTerm) params.search = searchTerm;
+                if (debouncedSearchTerm) params.search = debouncedSearchTerm;
                 if (selectedCategory) params.category = selectedCategory;
                 if (sortBy) params.sort = sortBy;
 
@@ -98,15 +108,16 @@ function ProjectsContent() {
 
         // Update URL params without reloading
         const params = new URLSearchParams();
-        if (searchTerm) params.set("search", searchTerm);
+        if (debouncedSearchTerm) params.set("search", debouncedSearchTerm);
         if (selectedCategory) params.set("category", selectedCategory);
         const qs = params.toString();
         router.push(qs ? `/projects?${qs}` : "/projects", { scroll: false });
 
-    }, [searchTerm, selectedCategory, sortBy, router]);
+    }, [debouncedSearchTerm, selectedCategory, sortBy, router]);
 
     const clearFilters = () => {
         setSearchTerm("");
+        setDebouncedSearchTerm("");
         setSelectedCategory("");
         setSortBy("newest");
     };
@@ -124,6 +135,7 @@ function ProjectsContent() {
 
                     <div className="self-start md:self-auto">
                         <button
+                            suppressHydrationWarning
                             onClick={() => setShowFilters(!showFilters)}
                             className="lg:hidden inline-flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-sm text-gray-700 font-medium hover:bg-gray-50"
                         >
@@ -144,7 +156,7 @@ function ProjectsContent() {
                                 <input
                                     type="text"
                                     placeholder="Search projects..."
-                                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-gray-900 placeholder:text-gray-500 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                 />
@@ -156,7 +168,7 @@ function ProjectsContent() {
                         <div>
                             <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-3">Sort By</h3>
                             <select
-                                className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white"
+                                className="w-full p-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white"
                                 value={sortBy}
                                 onChange={(e) => setSortBy(e.target.value)}
                             >
@@ -186,7 +198,7 @@ function ProjectsContent() {
                                         onChange={() => setSelectedCategory("")}
                                         className="w-4 h-4 text-indigo-600 border-gray-300 focus:ring-indigo-500"
                                     />
-                                    <span className={`text-sm ${selectedCategory === "" ? "font-semibold text-indigo-600" : "text-gray-600 group-hover:text-gray-900"}`}>
+                                    <span className={`text-sm ${selectedCategory === "" ? "font-semibold text-indigo-600" : "text-gray-800 group-hover:text-gray-900"}`}>
                                         All Categories
                                     </span>
                                 </label>
@@ -199,7 +211,7 @@ function ProjectsContent() {
                                             onChange={() => setSelectedCategory(cat.slug)}
                                             className="w-4 h-4 text-indigo-600 border-gray-300 focus:ring-indigo-500"
                                         />
-                                        <span className={`text-sm ${selectedCategory === cat.slug ? "font-semibold text-indigo-600" : "text-gray-600 group-hover:text-gray-900"}`}>
+                                        <span className={`text-sm ${selectedCategory === cat.slug ? "font-semibold text-indigo-600" : "text-gray-800 group-hover:text-gray-900"}`}>
                                             {cat.name}
                                         </span>
                                     </label>
