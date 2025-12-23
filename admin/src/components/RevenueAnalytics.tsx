@@ -80,7 +80,11 @@ export default function RevenueAnalytics({ orders, formatCurrency, className }: 
         for (let i = days - 1; i >= 0; i--) {
             const d = new Date(startOfToday);
             d.setDate(d.getDate() - i);
-            dayKeys.push(d.toISOString().slice(0, 10));
+            // Use local date string instead of ISO (UTC)
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            dayKeys.push(`${year}-${month}-${day}`);
         }
 
         const revenueByDay = new Map<string, number>();
@@ -90,7 +94,12 @@ export default function RevenueAnalytics({ orders, formatCurrency, className }: 
             const createdAt = order?.createdAt ? new Date(order.createdAt) : null;
             if (!createdAt || Number.isNaN(createdAt.getTime())) continue;
 
-            const key = createdAt.toISOString().slice(0, 10);
+            // Use local date string instead of ISO (UTC)
+            const year = createdAt.getFullYear();
+            const month = String(createdAt.getMonth() + 1).padStart(2, '0');
+            const day = String(createdAt.getDate()).padStart(2, '0');
+            const key = `${year}-${month}-${day}`;
+
             if (!revenueByDay.has(key)) continue;
 
             const amount = Number(order?.amount || 0);
