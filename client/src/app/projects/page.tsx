@@ -173,9 +173,8 @@ function ProjectsContent() {
                                 onChange={(e) => setSortBy(e.target.value)}
                             >
                                 <option value="newest">Newest Arrivals</option>
-                                <option value="price_asc">Price: Low to High</option>
-                                <option value="price_desc">Price: High to Low</option>
-                                <option value="popular">Most Popular</option>
+                                <option value="price-asc">Price: Low to High</option>
+                                <option value="price-desc">Price: High to Low</option>
                             </select>
                         </div>
 

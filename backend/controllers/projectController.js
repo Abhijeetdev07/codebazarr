@@ -77,12 +77,57 @@ exports.getAllProjects = async (req, res) => {
     }
 
     // Execute query
-    const projects = await Project.find(query)
-      .populate('category', 'name slug')
-      .sort(sortOption)
-      .skip(skip)
-      .limit(limit)
-      .select('-__v');
+    // NOTE: Some DBs may contain legacy string prices. For price sorting, convert safely to numeric first.
+    let projects;
+    if (req.query.sort === 'price-asc' || req.query.sort === 'price-desc') {
+      const priceSortDir = req.query.sort === 'price-asc' ? 1 : -1;
+
+      projects = await Project.aggregate([
+        { $match: query },
+        {
+          $addFields: {
+            _priceSort: {
+              $convert: {
+                input: '$price',
+                to: 'double',
+                onError: 0,
+                onNull: 0
+              }
+            }
+          }
+        },
+        { $sort: { _priceSort: priceSortDir, createdAt: -1 } },
+        { $skip: skip },
+        { $limit: limit },
+        {
+          $lookup: {
+            from: 'categories',
+            localField: 'category',
+            foreignField: '_id',
+            as: 'category'
+          }
+        },
+        { $unwind: { path: '$category', preserveNullAndEmptyArrays: true } },
+        {
+          $project: {
+            __v: 0,
+            _priceSort: 0,
+            'category.__v': 0,
+            'category.description': 0,
+            'category.isActive': 0,
+            'category.createdAt': 0,
+            'category.updatedAt': 0
+          }
+        }
+      ]);
+    } else {
+      projects = await Project.find(query)
+        .populate('category', 'name slug')
+        .sort(sortOption)
+        .skip(skip)
+        .limit(limit)
+        .select('-__v');
+    }
 
     // Get total count for pagination
     const totalProjects = await Project.countDocuments(query);
