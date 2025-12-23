@@ -186,7 +186,7 @@ export default function DashboardPage() {
 
                                         {/* Actions */}
                                         <div className="flex flex-col gap-3 justify-center sm:w-48 flex-shrink-0 border-t sm:border-t-0 sm:border-l border-gray-100 pt-4 sm:pt-0 sm:pl-6">
-                                            {order.projectId.sourceCodeUrl ? (
+                                            {order.projectId.sourceCodeUrl && order.status === 'completed' ? (
                                                 <a
                                                     href={order.projectId.sourceCodeUrl}
                                                     target="_blank"
@@ -195,6 +195,24 @@ export default function DashboardPage() {
                                                 >
                                                     <FiDownload /> Download Code
                                                 </a>
+                                            ) : order.status === 'pending' ? (
+                                                <button
+                                                    type="button"
+                                                    disabled
+                                                    className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-yellow-50 text-yellow-600 font-semibold rounded-lg cursor-not-allowed"
+                                                    title="Payment pending - complete payment to download"
+                                                >
+                                                    <FiClock /> Payment Pending
+                                                </button>
+                                            ) : order.status === 'failed' ? (
+                                                <button
+                                                    type="button"
+                                                    disabled
+                                                    className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-red-50 text-red-600 font-semibold rounded-lg cursor-not-allowed"
+                                                    title="Payment failed - please contact support"
+                                                >
+                                                    <FiClock /> Payment Failed
+                                                </button>
                                             ) : (
                                                 <button
                                                     type="button"

@@ -28,7 +28,10 @@ export default function DashboardPage() {
                 if (ordersRes.data.success) {
                     const orders = ordersRes.data.data;
                     setAllOrders(orders);
-                    const revenue = orders.reduce((acc: number, order: any) => acc + (order.amount || 0), 0);
+
+                    // Only count completed orders in revenue
+                    const completedOrders = orders.filter((order: any) => order.status === 'completed');
+                    const revenue = completedOrders.reduce((acc: number, order: any) => acc + (order.amount || 0), 0);
 
                     const userRoleCount = usersRes.data.data.filter((user: any) => user.role === 'user').length;
 
@@ -170,7 +173,14 @@ export default function DashboardPage() {
                                 </div>
                                 <div className="text-right">
                                     <p className="text-sm font-bold text-gray-900">{formatCurrency(order.amount)}</p>
-                                    <p className="text-xs text-green-600 bg-green-50 px-2 py-0.5 rounded-full inline-block mt-1">Paid</p>
+                                    <p className={`text-xs px-2 py-0.5 rounded-full inline-block mt-1 ${order.status === 'completed'
+                                        ? 'text-green-600 bg-green-50'
+                                        : order.status === 'failed'
+                                            ? 'text-red-600 bg-red-50'
+                                            : 'text-yellow-600 bg-yellow-50'
+                                        }`}>
+                                        {order.status === 'completed' ? 'Paid' : order.status === 'failed' ? 'Failed' : 'Pending'}
+                                    </p>
                                 </div>
                             </div>
                         ))}

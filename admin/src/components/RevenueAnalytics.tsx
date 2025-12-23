@@ -21,6 +21,14 @@ export default function RevenueAnalytics({ orders, formatCurrency, className }: 
             return;
         }
 
+        // Only count completed orders in revenue
+        const completedOrders = orders.filter((order: any) => order.status === 'completed');
+
+        if (!completedOrders.length) {
+            setRevenueData([]);
+            return;
+        }
+
         const trimZeroEdges = (data: any[], padding: number) => {
             const firstNonZero = data.findIndex((d) => Number(d?.revenue || 0) > 0);
             if (firstNonZero === -1) return data;
@@ -52,7 +60,7 @@ export default function RevenueAnalytics({ orders, formatCurrency, className }: 
             const revenueByMonth = new Map<string, number>();
             for (const key of monthKeys) revenueByMonth.set(key, 0);
 
-            for (const order of orders) {
+            for (const order of completedOrders) {
                 const createdAt = order?.createdAt ? new Date(order.createdAt) : null;
                 if (!createdAt || Number.isNaN(createdAt.getTime())) continue;
 
@@ -90,7 +98,7 @@ export default function RevenueAnalytics({ orders, formatCurrency, className }: 
         const revenueByDay = new Map<string, number>();
         for (const key of dayKeys) revenueByDay.set(key, 0);
 
-        for (const order of orders) {
+        for (const order of completedOrders) {
             const createdAt = order?.createdAt ? new Date(order.createdAt) : null;
             if (!createdAt || Number.isNaN(createdAt.getTime())) continue;
 
@@ -100,10 +108,10 @@ export default function RevenueAnalytics({ orders, formatCurrency, className }: 
             const day = String(createdAt.getDate()).padStart(2, '0');
             const key = `${year}-${month}-${day}`;
 
-            if (!revenueByDay.has(key)) continue;
-
-            const amount = Number(order?.amount || 0);
-            revenueByDay.set(key, (revenueByDay.get(key) || 0) + amount);
+            if (revenueByDay.has(key)) {
+                const amount = Number(order?.amount || 0);
+                revenueByDay.set(key, (revenueByDay.get(key) || 0) + amount);
+            }
         }
 
         setRevenueData(
@@ -112,7 +120,7 @@ export default function RevenueAnalytics({ orders, formatCurrency, className }: 
                     name: new Date(key).toLocaleDateString("en-IN", { month: "short", day: "2-digit" }),
                     revenue: revenueByDay.get(key) || 0,
                 })),
-                2
+                1  // Show only 1 zero date before and after revenue
             )
         );
     }, [orders, revenueRange]);
