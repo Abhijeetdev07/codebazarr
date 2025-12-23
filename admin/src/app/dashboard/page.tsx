@@ -61,6 +61,23 @@ export default function DashboardPage() {
             return;
         }
 
+        const trimZeroEdges = (data: any[], padding: number) => {
+            const firstNonZero = data.findIndex((d) => Number(d?.revenue || 0) > 0);
+            if (firstNonZero === -1) return data;
+
+            let lastNonZero = -1;
+            for (let i = data.length - 1; i >= 0; i--) {
+                if (Number(data[i]?.revenue || 0) > 0) {
+                    lastNonZero = i;
+                    break;
+                }
+            }
+
+            const start = Math.max(0, firstNonZero - padding);
+            const end = Math.min(data.length - 1, lastNonZero + padding);
+            return data.slice(start, end + 1);
+        };
+
         const now = new Date();
         const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
@@ -87,10 +104,10 @@ export default function DashboardPage() {
             }
 
             setRevenueData(
-                monthKeys.map((key) => ({
+                trimZeroEdges(monthKeys.map((key) => ({
                     name: new Date(`${key}-01`).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' }),
                     revenue: revenueByMonth.get(key) || 0,
-                }))
+                })), 2)
             );
             return;
         }
@@ -118,10 +135,10 @@ export default function DashboardPage() {
         }
 
         setRevenueData(
-            dayKeys.map((key) => ({
+            trimZeroEdges(dayKeys.map((key) => ({
                 name: new Date(key).toLocaleDateString('en-IN', { month: 'short', day: '2-digit' }),
                 revenue: revenueByDay.get(key) || 0,
-            }))
+            })), 2)
         );
     }, [allOrders, revenueRange]);
 
