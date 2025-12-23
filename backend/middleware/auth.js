@@ -23,6 +23,17 @@ exports.protect = async (req, res, next) => {
       // Verify token
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
+      // Env-only admin: no DB user exists
+      if (decoded && decoded.isEnvAdmin) {
+        req.user = {
+          id: decoded.id,
+          email: decoded.email,
+          role: decoded.role,
+          isEnvAdmin: true
+        };
+        return next();
+      }
+
       // Get user from token
       req.user = await User.findById(decoded.id);
 

@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const { validationResult } = require('express-validator');
+const jwt = require('jsonwebtoken');
 
 // @desc    Register a new user
 // @route   POST /api/auth/register
@@ -69,6 +70,42 @@ exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    const adminEmail = process.env.ADMIN_EMAIL;
+    const adminPassword = process.env.ADMIN_PASSWORD;
+    const isAdminEnvMatch =
+      adminEmail &&
+      adminPassword &&
+      String(email || '').toLowerCase() === String(adminEmail).toLowerCase() &&
+      password === adminPassword;
+
+    // Env-only admin login (do not store admin in DB)
+    if (isAdminEnvMatch) {
+      const token = jwt.sign(
+        {
+          id: 'env-admin',
+          email: String(adminEmail).toLowerCase(),
+          role: 'admin',
+          isEnvAdmin: true
+        },
+        process.env.JWT_SECRET,
+        { expiresIn: process.env.JWT_EXPIRE || '1d' }
+      );
+
+      return res.status(200).json({
+        success: true,
+        message: 'Login successful',
+        data: {
+          user: {
+            id: 'env-admin',
+            name: 'Admin',
+            email: String(adminEmail).toLowerCase(),
+            role: 'admin'
+          },
+          token
+        }
+      });
+    }
+
     // Validate input
     if (!email || !password) {
       return res.status(400).json({
@@ -79,6 +116,7 @@ exports.login = async (req, res) => {
 
     // Find user and include password field
     const user = await User.findOne({ email }).select('+password');
+
     if (!user) {
       return res.status(401).json({
         success: false,
@@ -127,6 +165,18 @@ exports.login = async (req, res) => {
 // @access  Private
 exports.getMe = async (req, res) => {
   try {
+    if (req.user && req.user.isEnvAdmin) {
+      return res.status(200).json({
+        success: true,
+        data: {
+          id: 'env-admin',
+          name: 'Admin',
+          email: req.user.email,
+          role: 'admin'
+        }
+      });
+    }
+
     const user = await User.findById(req.user.id);
 
     res.status(200).json({

@@ -10,22 +10,7 @@ const seedAdmin = async () => {
       return;
     }
 
-    const existingAdmin = await User.findOne({ email: adminEmail });
-
-    if (!existingAdmin) {
-      await User.create({
-        name: 'Admin',
-        email: adminEmail,
-        password: adminPassword,
-        role: 'admin'
-      });
-      console.log(`✅ Admin account created: ${adminEmail}`);
-    } else {
-      // Update password if it changed in .env
-      existingAdmin.password = adminPassword;
-      await existingAdmin.save();
-      console.log(`✅ Admin account synced: ${adminEmail}`);
-    }
+    console.warn('⚠️ Skipping admin DB seeding. Admin authentication is env-only.');
   } catch (error) {
     console.error('❌ Error seeding admin:', error.message);
   }

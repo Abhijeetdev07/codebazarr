@@ -11,9 +11,7 @@ const app = express();
 
 // Connect to MongoDB
 // Connect to MongoDB
-connectDB().then(() => {
-  require('./utils/adminSeeder')();
-});
+connectDB();
 
 // Middleware (CORS)
 const allowedOrigins = [process.env.CLIENT_URL, process.env.ADMIN_URL].filter(Boolean);
