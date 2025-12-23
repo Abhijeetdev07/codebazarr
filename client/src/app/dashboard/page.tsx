@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react"; // Added missing import
+import { useEffect, useMemo, useState } from "react"; // Added missing import
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { orderAPI } from "@/lib/api";
 import Link from "next/link";
 import Image from "next/image"; // Added missing import
-import { FiBox, FiDownload, FiClock, FiUser, FiLogOut, FiShoppingBag, FiCalendar } from "react-icons/fi";
+import { FiBox, FiDownload, FiClock, FiUser, FiLogOut, FiShoppingBag, FiCalendar, FiRefreshCw } from "react-icons/fi";
 
 interface Order {
     _id: string;
@@ -27,6 +27,51 @@ export default function DashboardPage() {
     const router = useRouter();
     const [orders, setOrders] = useState<Order[]>([]);
     const [loading, setLoading] = useState(true);
+
+    const displayOrders = useMemo(() => {
+        const byProject: Record<string, Order> = {};
+
+        for (const order of orders) {
+            const projectKey = order.projectId?._id || order._id;
+            const existing = byProject[projectKey];
+            if (!existing) {
+                byProject[projectKey] = order;
+                continue;
+            }
+
+            const currTime = new Date(order.createdAt || 0).getTime();
+            const existingTime = new Date(existing.createdAt || 0).getTime();
+            if (currTime >= existingTime) {
+                byProject[projectKey] = order;
+            }
+        }
+
+        return Object.values(byProject).sort((a, b) => {
+            const aTime = new Date(a.createdAt || 0).getTime();
+            const bTime = new Date(b.createdAt || 0).getTime();
+            return bTime - aTime;
+        });
+    }, [orders]);
+
+    const getStatusMeta = (status: string) => {
+        const normalized = String(status || '').toLowerCase();
+        if (normalized === 'completed') {
+            return {
+                label: 'Purchased',
+                pillClass: 'bg-green-100 text-green-700'
+            };
+        }
+        if (normalized === 'failed') {
+            return {
+                label: 'Payment Failed',
+                pillClass: 'bg-red-100 text-red-700'
+            };
+        }
+        return {
+            label: 'Payment Pending',
+            pillClass: 'bg-yellow-100 text-yellow-700'
+        };
+    };
 
     // Auth Protection
     useEffect(() => {
@@ -102,7 +147,7 @@ export default function DashboardPage() {
                             </div>
                             <div>
                                 <p className="text-sm text-gray-500 font-medium">Total Purchases</p>
-                                <p className="text-2xl font-bold text-gray-900">{orders.length}</p>
+                                <p className="text-2xl font-bold text-gray-900">{displayOrders.length}</p>
                             </div>
                         </div>
                         {/* <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
@@ -132,7 +177,7 @@ export default function DashboardPage() {
                             <FiBox /> My Purchased Projects
                         </h2>
 
-                        {orders.length === 0 ? (
+                        {displayOrders.length === 0 ? (
                             <div className="bg-white rounded-2xl border-2 border-dashed border-gray-200 p-12 text-center">
                                 <div className="mx-auto h-16 w-16 bg-gray-50 rounded-full flex items-center justify-center mb-4 text-gray-400">
                                     <FiShoppingBag className="h-8 w-8" />
@@ -145,7 +190,12 @@ export default function DashboardPage() {
                             </div>
                         ) : (
                             <div className="space-y-4">
-                                {orders.map((order) => (
+                                {displayOrders.map((order) => {
+                                    const statusMeta = getStatusMeta(order.status);
+                                    const isCompleted = String(order.status || '').toLowerCase() === 'completed';
+                                    const isRetryable = !isCompleted && (String(order.status || '').toLowerCase() === 'pending' || String(order.status || '').toLowerCase() === 'failed');
+
+                                    return (
                                     <div key={order._id} className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6 flex flex-col sm:flex-row gap-6 transition-all hover:shadow-md">
                                         {/* Project Image */}
                                         <div className="relative h-48 sm:h-32 w-full sm:w-48 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100">
@@ -164,8 +214,8 @@ export default function DashboardPage() {
                                                     <h3 className="text-lg font-bold text-gray-900 mb-2">
                                                         {order.projectId.title}
                                                     </h3>
-                                                    <span className="px-3 py-1 bg-green-100 text-green-700 text-xs font-bold uppercase rounded-full">
-                                                        Purchased
+                                                    <span className={`px-3 py-1 text-xs font-bold uppercase rounded-full ${statusMeta.pillClass}`}>
+                                                        {statusMeta.label}
                                                     </span>
                                                 </div>
                                                 <p className="text-sm text-gray-600 line-clamp-2 mb-4">
@@ -186,7 +236,7 @@ export default function DashboardPage() {
 
                                         {/* Actions */}
                                         <div className="flex flex-col gap-3 justify-center sm:w-48 flex-shrink-0 border-t sm:border-t-0 sm:border-l border-gray-100 pt-4 sm:pt-0 sm:pl-6">
-                                            {order.projectId.sourceCodeUrl && order.status === 'completed' ? (
+                                            {order.projectId.sourceCodeUrl && isCompleted ? (
                                                 <a
                                                     href={order.projectId.sourceCodeUrl}
                                                     target="_blank"
@@ -195,23 +245,17 @@ export default function DashboardPage() {
                                                 >
                                                     <FiDownload /> Download Code
                                                 </a>
-                                            ) : order.status === 'pending' ? (
+                                            ) : isRetryable ? (
                                                 <button
                                                     type="button"
-                                                    disabled
-                                                    className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-yellow-50 text-yellow-600 font-semibold rounded-lg cursor-not-allowed"
-                                                    title="Payment pending - complete payment to download"
+                                                    onClick={() => router.push(`/projects/${order.projectId._id}`)}
+                                                    className={`w-full flex items-center justify-center gap-2 px-4 py-2 font-semibold rounded-lg transition-colors ${String(order.status || '').toLowerCase() === 'failed'
+                                                        ? 'bg-red-50 text-red-600 hover:bg-red-100'
+                                                        : 'bg-yellow-50 text-yellow-700 hover:bg-yellow-100'
+                                                        }`}
+                                                    title="Retry payment"
                                                 >
-                                                    <FiClock /> Payment Pending
-                                                </button>
-                                            ) : order.status === 'failed' ? (
-                                                <button
-                                                    type="button"
-                                                    disabled
-                                                    className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-red-50 text-red-600 font-semibold rounded-lg cursor-not-allowed"
-                                                    title="Payment failed - please contact support"
-                                                >
-                                                    <FiClock /> Payment Failed
+                                                    <FiRefreshCw /> Try Again
                                                 </button>
                                             ) : (
                                                 <button
@@ -231,7 +275,8 @@ export default function DashboardPage() {
                                             </Link>
                                         </div>
                                     </div>
-                                ))}
+                                    );
+                                })}
                             </div>
                         )}
                     </div>
