@@ -37,12 +37,27 @@ export default function CategorySection() {
 
     if (loading) {
         return (
-            <section className="py-16 bg-gray-50">
+            <section className="pt-10 bg-gray-200">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="h-8 w-48 bg-gray-200 rounded mb-8 animate-pulse mx-auto"></div>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                        {[1, 2, 3, 4].map((i) => (
-                            <div key={i} className="h-32 bg-gray-200 rounded-xl animate-pulse"></div>
+                    <div className="mb-12">
+                        <div className="h-10 w-72 bg-gray-200 rounded mb-4 animate-pulse" />
+                        <div className="h-6 w-full max-w-3xl bg-gray-100 rounded animate-pulse" />
+                    </div>
+
+                    <div className="flex overflow-x-auto pb-8 gap-6 px-4 snap-x hide-scrollbar mx-auto w-fit max-w-full">
+                        {[1, 2, 3, 4, 5, 6].map((i) => (
+                            <div
+                                key={i}
+                                className="relative bg-white rounded-2xl p-6 shadow-sm border border-gray-100 min-w-[200px] flex-shrink-0 snap-center animate-pulse"
+                            >
+                                <div className="flex flex-col items-center text-center space-y-4">
+                                    <div className="h-14 w-14 rounded-full bg-gray-100" />
+                                    <div className="w-full space-y-2">
+                                        <div className="h-5 w-28 bg-gray-200 rounded mx-auto" />
+                                        <div className="h-4 w-20 bg-gray-100 rounded mx-auto" />
+                                    </div>
+                                </div>
+                            </div>
                         ))}
                     </div>
                 </div>
@@ -75,7 +90,7 @@ export default function CategorySection() {
 
                         return (
                             <Link
-                                href={`/projects?category=${category._id}`}
+                                href={`/projects?category=${category.slug || category._id}`}
                                 key={category._id}
                                 className="group relative bg-white rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-indigo-100 transform hover:-translate-y-1 min-w-[200px] flex-shrink-0 snap-center"
                             >

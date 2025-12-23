@@ -247,20 +247,20 @@ export default function ReviewsPage() {
 
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm">
-                    <div className="text-xs font-semibold text-gray-700">Average Rating</div>
+                    <div className="text-xs md:text-sm lg:text-base font-semibold text-gray-700">Average Rating</div>
                     <div className="mt-3 flex flex-wrap items-center gap-3">
-                        <div className="text-3xl font-bold text-gray-900">
+                        <div className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900">
                             {totalLabel > 0 ? avgRating.toFixed(1) : "0.0"}
                         </div>
                         {renderStars(avgRating)}
                     </div>
-                    <div className="mt-3 text-xs text-gray-500">Based on {totalLabel} review(s)</div>
+                    <div className="mt-3 text-xs md:text-sm text-gray-500">Based on {totalLabel} review(s)</div>
                 </div>
 
                 <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm">
-                    <div className="text-xs font-semibold text-gray-700">Total Reviews</div>
-                    <div className="mt-3 text-3xl font-bold text-indigo-600">{totalLabel}</div>
-                    <div className="mt-3 text-xs text-gray-500">Across all projects</div>
+                    <div className="text-xs md:text-sm lg:text-base font-semibold text-gray-700">Total Reviews</div>
+                    <div className="mt-3 text-3xl md:text-4xl lg:text-5xl font-bold text-indigo-600">{totalLabel}</div>
+                    <div className="mt-3 text-xs md:text-sm text-gray-500">Across all projects</div>
                 </div>
 
                 <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm col-span-2 md:col-span-1">

@@ -168,7 +168,7 @@ function ProjectsContent() {
                         <div>
                             <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-3">Sort By</h3>
                             <select
-                                className="w-full p-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white"
+                                className="w-full max-w-xs p-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white"
                                 value={sortBy}
                                 onChange={(e) => setSortBy(e.target.value)}
                             >

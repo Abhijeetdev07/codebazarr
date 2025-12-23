@@ -41,8 +41,15 @@ export default function HeroSlider() {
 
     if (loading) {
         return (
-            <div className="w-full h-[300px] md:h-[400px] bg-gray-100 animate-pulse flex items-center justify-center">
-                <div className="text-gray-400">Loading banners...</div>
+            <div className="w-full max-w-[1500px] mx-auto px-4 mt-6">
+                <div className="relative w-full h-[200px] md:h-[400px] rounded-2xl overflow-hidden shadow-lg bg-gray-100 animate-pulse">
+                    <div className="absolute inset-0 bg-gradient-to-r from-gray-100 via-gray-50 to-gray-100" />
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+                        <div className="h-2 w-2 rounded-full bg-gray-200" />
+                        <div className="h-2 w-6 rounded-full bg-gray-300" />
+                        <div className="h-2 w-2 rounded-full bg-gray-200" />
+                    </div>
+                </div>
             </div>
         );
     }
