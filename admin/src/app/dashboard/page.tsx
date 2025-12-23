@@ -12,8 +12,10 @@ export default function DashboardPage() {
         totalOrders: 0,
         totalRevenue: 0,
     });
+    const [allOrders, setAllOrders] = useState<any[]>([]);
     const [recentOrders, setRecentOrders] = useState<any[]>([]);
     const [revenueData, setRevenueData] = useState<any[]>([]);
+    const [revenueRange, setRevenueRange] = useState<'weekly' | 'monthly' | 'yearly'>('weekly');
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -27,6 +29,7 @@ export default function DashboardPage() {
 
                 if (ordersRes.data.success) {
                     const orders = ordersRes.data.data;
+                    setAllOrders(orders);
                     const revenue = orders.reduce((acc: number, order: any) => acc + (order.amount || 0), 0);
 
                     const userRoleCount = usersRes.data.data.filter((user: any) => user.role === 'user').length;
@@ -40,14 +43,6 @@ export default function DashboardPage() {
                     }));
 
                     setRecentOrders(orders.slice(0, 10));
-
-                    // Process Revenue Data for Chart (Last 7 days simplified)
-                    // Real implementation would group by date
-                    const chartData = orders.slice(0, 10).map((order: any) => ({
-                        name: new Date(order.createdAt).toLocaleDateString(),
-                        amount: order.amount
-                    })).reverse();
-                    setRevenueData(chartData);
                 }
 
             } catch (error) {
@@ -59,6 +54,76 @@ export default function DashboardPage() {
 
         fetchData();
     }, []);
+
+    useEffect(() => {
+        if (!allOrders.length) {
+            setRevenueData([]);
+            return;
+        }
+
+        const now = new Date();
+        const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+        if (revenueRange === 'yearly') {
+            const monthKeys: string[] = [];
+            for (let i = 11; i >= 0; i--) {
+                const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+                const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+                monthKeys.push(key);
+            }
+
+            const revenueByMonth = new Map<string, number>();
+            for (const key of monthKeys) revenueByMonth.set(key, 0);
+
+            for (const order of allOrders) {
+                const createdAt = order?.createdAt ? new Date(order.createdAt) : null;
+                if (!createdAt || Number.isNaN(createdAt.getTime())) continue;
+
+                const key = `${createdAt.getFullYear()}-${String(createdAt.getMonth() + 1).padStart(2, '0')}`;
+                if (!revenueByMonth.has(key)) continue;
+
+                const amount = Number(order?.amount || 0);
+                revenueByMonth.set(key, (revenueByMonth.get(key) || 0) + amount);
+            }
+
+            setRevenueData(
+                monthKeys.map((key) => ({
+                    name: new Date(`${key}-01`).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' }),
+                    revenue: revenueByMonth.get(key) || 0,
+                }))
+            );
+            return;
+        }
+
+        const days = revenueRange === 'monthly' ? 30 : 7;
+        const dayKeys: string[] = [];
+        for (let i = days - 1; i >= 0; i--) {
+            const d = new Date(startOfToday);
+            d.setDate(d.getDate() - i);
+            dayKeys.push(d.toISOString().slice(0, 10));
+        }
+
+        const revenueByDay = new Map<string, number>();
+        for (const key of dayKeys) revenueByDay.set(key, 0);
+
+        for (const order of allOrders) {
+            const createdAt = order?.createdAt ? new Date(order.createdAt) : null;
+            if (!createdAt || Number.isNaN(createdAt.getTime())) continue;
+
+            const key = createdAt.toISOString().slice(0, 10);
+            if (!revenueByDay.has(key)) continue;
+
+            const amount = Number(order?.amount || 0);
+            revenueByDay.set(key, (revenueByDay.get(key) || 0) + amount);
+        }
+
+        setRevenueData(
+            dayKeys.map((key) => ({
+                name: new Date(key).toLocaleDateString('en-IN', { month: 'short', day: '2-digit' }),
+                revenue: revenueByDay.get(key) || 0,
+            }))
+        );
+    }, [allOrders, revenueRange]);
 
 
     const formatCurrency = (amount: number | undefined) => {
@@ -160,18 +225,29 @@ export default function DashboardPage() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Revenue Chart */}
                 <div className="lg:col-span-2 bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
-                    <h3 className="text-lg font-bold text-gray-900 mb-6">Revenue Analytics</h3>
+                    <div className="flex items-center justify-between mb-6 gap-4">
+                        <h3 className="text-lg font-bold text-gray-900">Revenue Analytics</h3>
+                        <select
+                            value={revenueRange}
+                            onChange={(e) => setRevenueRange(e.target.value as 'weekly' | 'monthly' | 'yearly')}
+                            className="h-9 px-3 border border-gray-200 rounded-lg text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        >
+                            <option value="weekly">Weekly</option>
+                            <option value="monthly">Monthly</option>
+                            <option value="yearly">Yearly</option>
+                        </select>
+                    </div>
                     <div className="h-64 cursor-default">
                         <ResponsiveContainer width="100%" height="100%">
                             <LineChart data={revenueData}>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
                                 <XAxis dataKey="name" stroke="#9CA3AF" fontSize={12} tickLine={false} axisLine={false} />
-                                <YAxis stroke="#9CA3AF" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `₹${value}`} />
+                                <YAxis stroke="#9CA3AF" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => formatCurrency(Number(value))} />
                                 <Tooltip
                                     contentStyle={{ backgroundColor: '#fff', borderRadius: '8px', border: '1px solid #E5E7EB', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
-                                    formatter={(value: number | undefined) => [formatCurrency(value), 'Revenue']}
+                                    formatter={(value: number | string | undefined) => [formatCurrency(Number(value || 0)), 'Revenue']}
                                 />
-                                <Line type="monotone" dataKey="amount" stroke="#4F46E5" strokeWidth={3} dot={{ r: 4, fill: '#4F46E5', strokeWidth: 2, stroke: '#fff' }} activeDot={{ r: 6 }} />
+                                <Line type="monotone" dataKey="revenue" stroke="#4F46E5" strokeWidth={3} dot={{ r: 4, fill: '#4F46E5', strokeWidth: 2, stroke: '#fff' }} activeDot={{ r: 6 }} />
                             </LineChart>
                         </ResponsiveContainer>
                     </div>
