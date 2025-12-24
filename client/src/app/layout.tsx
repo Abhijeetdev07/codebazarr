@@ -39,7 +39,7 @@ export default function RootLayout({
                 <span className="text-xs sm:text-sm font-semibold">
                   Up to <span className="font-bold">10% OFF</span> — Apply
                 </span>
-                <span className="text-xs sm:text-sm font-bold bg-white text-indigo-700 rounded-md p-0.5">
+                <span className="text-xs sm:text-sm font-bold bg-white/20 backdrop-blur-md text-white rounded-md px-2 py-0.5">
                   CODE10
                 </span>
                 <span className="text-xs sm:text-sm font-semibold">coupon code</span>
