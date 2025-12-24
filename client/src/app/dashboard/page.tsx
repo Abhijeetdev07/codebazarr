@@ -140,8 +140,8 @@ export default function DashboardPage() {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
                     {/* Stats Cards */}
-                    <div className="lg:col-span-3 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
+                    <div className="lg:col-span-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                        <div className="w-full bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
                             <div className="p-4 bg-blue-50 text-blue-600 rounded-xl">
                                 <FiShoppingBag className="h-6 w-6" />
                             </div>
