@@ -97,7 +97,7 @@ export default function Footer() {
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/projects?category=web-app" className="text-gray-400 hover:text-indigo-400 transition-colors duration-200 text-sm">
+                                <Link href="/projects?category=apps" className="text-gray-400 hover:text-indigo-400 transition-colors duration-200 text-sm">
                                     App Developement
                                 </Link>
                             </li>
