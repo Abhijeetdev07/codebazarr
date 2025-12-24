@@ -16,9 +16,41 @@ const orderSchema = new mongoose.Schema({
     required: [true, 'Amount is required'],
     min: [0, 'Amount cannot be negative']
   },
+  originalAmount: {
+    type: Number,
+    default: null,
+    min: [0, 'Original amount cannot be negative']
+  },
+  discountAmount: {
+    type: Number,
+    default: 0,
+    min: [0, 'Discount amount cannot be negative']
+  },
+  finalAmount: {
+    type: Number,
+    default: null,
+    min: [0, 'Final amount cannot be negative']
+  },
+  couponId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Coupon',
+    default: null
+  },
+  couponCode: {
+    type: String,
+    default: null,
+    trim: true
+  },
+  paymentProvider: {
+    type: String,
+    enum: ['razorpay'],
+    default: 'razorpay'
+  },
   razorpayOrderId: {
     type: String,
-    required: [true, 'Razorpay order ID is required'],
+    required: function () {
+      return this.paymentProvider === 'razorpay' && Number(this.finalAmount ?? this.amount ?? 0) > 0;
+    },
   },
   razorpayPaymentId: {
     type: String,

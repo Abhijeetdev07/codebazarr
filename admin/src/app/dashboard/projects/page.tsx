@@ -13,7 +13,7 @@ export default function ProjectsPage() {
 
     const fetchProjects = async () => {
         try {
-            const response = await projectAPI.getAll();
+            const response = await projectAPI.getAll({ includeInactive: true });
             if (response.data.success) {
                 setProjects(response.data.data);
             }

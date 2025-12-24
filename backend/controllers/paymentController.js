@@ -2,14 +2,50 @@ const Razorpay = require('razorpay');
 const crypto = require('crypto');
 const Project = require('../models/Project');
 const Order = require('../models/Order');
+const Coupon = require('../models/Coupon');
 const razorpay = require('../config/razorpay');
+
+const SECRET = process.env.COUPON_SECRET;
+
+const hash = (text) => {
+  return crypto.createHmac('sha256', SECRET)
+    .update(text)
+    .digest('hex');
+};
+
+async function consumeCouponAfterSuccess(couponIdOrDoc) {
+  if (!couponIdOrDoc) return { success: true };
+
+  const coupon = typeof couponIdOrDoc === 'object' && couponIdOrDoc._id
+    ? couponIdOrDoc
+    : await Coupon.findById(couponIdOrDoc);
+
+  if (!coupon) return { success: true };
+
+  if (coupon.usageType === 'ONCE_GLOBAL') {
+    const updated = await Coupon.findOneAndUpdate(
+      { _id: coupon._id, isActive: true, usedCount: 0 },
+      { $set: { isActive: false, usedCount: 1, consumedAt: new Date() } },
+      { new: true }
+    );
+
+    if (!updated) {
+      return { success: false, message: 'Coupon has already been used' };
+    }
+
+    return { success: true };
+  }
+
+  await Coupon.updateOne({ _id: coupon._id }, { $inc: { usedCount: 1 } });
+  return { success: true };
+}
 
 // @desc    Create Razorpay Order
 // @route   POST /api/payment/create-order
 // @access  Private
 exports.createOrder = async (req, res) => {
   try {
-    const { projectId } = req.body;
+    const { projectId, couponCode } = req.body;
 
     const project = await Project.findById(projectId);
 
@@ -36,13 +72,100 @@ exports.createOrder = async (req, res) => {
       });
     }
 
+    const originalAmount = Number(project.price || 0);
+    let appliedCoupon = null;
+    let percentOff = 0;
+    let discountAmount = 0;
+    let finalAmount = originalAmount;
+    let normalizedCode = null;
+
+    if (couponCode) {
+      normalizedCode = String(couponCode).trim().toUpperCase();
+      const codeHash = hash(normalizedCode);
+
+      // Find by HASH
+      const coupon = await Coupon.findOne({ codeHash });
+
+      if (!coupon) {
+        return res.status(404).json({
+          success: false,
+          message: 'Invalid coupon code'
+        });
+      }
+
+      if (!coupon.isActive) {
+        return res.status(400).json({
+          success: false,
+          message: 'Coupon is inactive'
+        });
+      }
+
+      if (coupon.usageType === 'ONCE_GLOBAL' && Number(coupon.usedCount || 0) > 0) {
+        return res.status(400).json({
+          success: false,
+          message: 'Coupon has already been used'
+        });
+      }
+
+      appliedCoupon = coupon;
+      percentOff = Number(coupon.percentOff || 0);
+      discountAmount = Math.round((originalAmount * percentOff) / 100);
+      finalAmount = Math.max(0, originalAmount - discountAmount);
+    }
+
+    if (finalAmount <= 0) {
+      const freeOrder = await Order.create({
+        userId: req.user._id,
+        projectId: projectId,
+        amount: 0,
+        originalAmount,
+        discountAmount,
+        finalAmount: 0,
+        couponId: appliedCoupon ? appliedCoupon._id : null,
+        couponCode: appliedCoupon ? normalizedCode : null, // Use input code
+        paymentProvider: 'razorpay',
+        status: 'completed'
+      });
+
+      if (appliedCoupon) {
+        const consumeResult = await consumeCouponAfterSuccess(appliedCoupon);
+        if (!consumeResult.success) {
+          await Order.findByIdAndDelete(freeOrder._id);
+          return res.status(400).json({
+            success: false,
+            message: consumeResult.message
+          });
+        }
+      }
+
+      return res.status(200).json({
+        success: true,
+        data: {
+          freePurchase: true,
+          dbOrderId: freeOrder._id,
+          pricing: {
+            originalAmount,
+            discountAmount,
+            finalAmount: 0,
+            ...(appliedCoupon ? { couponCode: normalizedCode, percentOff } : {})
+          },
+          project: {
+            title: project.title,
+            description: project.description,
+            image: project.images[0]
+          }
+        }
+      });
+    }
+
     const options = {
-      amount: Math.round(project.price * 100), // amount in smallest currency unit (paise)
+      amount: Math.round(finalAmount * 100), // amount in smallest currency unit (paise)
       currency: "INR",
       receipt: `receipt_${Date.now()}`,
       notes: {
         projectId: project._id.toString(),
-        userId: req.user._id.toString()
+        userId: req.user._id.toString(),
+        ...(appliedCoupon ? { couponCode: normalizedCode, percentOff: String(percentOff) } : {})
       }
     };
 
@@ -54,12 +177,18 @@ exports.createOrder = async (req, res) => {
     const dbOrder = existingDbOrder
       ? existingDbOrder
       : await Order.create({
-          userId: req.user._id,
-          projectId: projectId,
-          amount: project.price,
-          razorpayOrderId: order.id,
-          status: 'pending'
-        });
+        userId: req.user._id,
+        projectId: projectId,
+        amount: finalAmount,
+        originalAmount,
+        discountAmount,
+        finalAmount,
+        couponId: appliedCoupon ? appliedCoupon._id : null,
+        couponCode: appliedCoupon ? normalizedCode : null, // Use input code
+        paymentProvider: 'razorpay',
+        razorpayOrderId: order.id,
+        status: 'pending'
+      });
 
     res.status(200).json({
       success: true,
@@ -69,6 +198,12 @@ exports.createOrder = async (req, res) => {
         currency: order.currency,
         amount: order.amount,
         keyId: process.env.RAZORPAY_KEY_ID,
+        pricing: {
+          originalAmount,
+          discountAmount,
+          finalAmount,
+          ...(appliedCoupon ? { couponCode: normalizedCode, percentOff } : {})
+        },
         project: {
           title: project.title,
           description: project.description,
@@ -115,31 +250,64 @@ exports.verifyPayment = async (req, res) => {
       });
     }
 
-    // Payment is valid, save order
-    const project = await Project.findById(projectId);
-
-    if (!project) {
-      return res.status(404).json({ success: false, message: 'Project not found' });
-    }
-
     // Update existing pending order (preferred) else create completed order
     let order = await Order.findOne({ razorpayOrderId: razorpay_order_id });
+
+    if (order && order.status === 'completed') {
+      return res.status(200).json({
+        success: true,
+        message: 'Payment already verified',
+        data: order
+      });
+    }
+
+    if (order && order.status === 'failed') {
+      return res.status(400).json({
+        success: false,
+        message: 'Order is already marked as failed'
+      });
+    }
+
     if (!order) {
+      const project = await Project.findById(projectId);
+
+      if (!project) {
+        return res.status(404).json({ success: false, message: 'Project not found' });
+      }
+
       order = new Order({
         userId: req.user._id,
         projectId: projectId,
-        amount: project.price,
+        amount: Number(project.price || 0),
+        originalAmount: Number(project.price || 0),
+        discountAmount: 0,
+        finalAmount: Number(project.price || 0),
+        paymentProvider: 'razorpay',
         razorpayOrderId: razorpay_order_id
       });
     }
 
     order.userId = req.user._id;
     order.projectId = projectId;
-    order.amount = project.price;
+    // Preserve the discounted amount captured during create-order
+    // (Do NOT overwrite with project's current price)
+    order.amount = Number(order.finalAmount ?? order.amount ?? 0);
     order.razorpayPaymentId = razorpay_payment_id;
     order.razorpaySignature = razorpay_signature;
     order.status = 'completed';
     await order.save();
+
+    if (order.couponId) {
+      const consumeResult = await consumeCouponAfterSuccess(order.couponId);
+      if (!consumeResult.success) {
+        order.status = 'failed';
+        await order.save();
+        return res.status(400).json({
+          success: false,
+          message: consumeResult.message
+        });
+      }
+    }
 
     res.status(200).json({
       success: true,

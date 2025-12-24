@@ -55,7 +55,7 @@ export const useRazorpay = () => {
         });
     };
 
-    const handlePayment = async (projectId: string) => {
+    const handlePayment = async (projectId: string, couponCode?: string) => {
         if (!user) {
             toast.error("Please login to continue");
             router.push(`/login?redirect=/projects/${projectId}`);
@@ -74,12 +74,19 @@ export const useRazorpay = () => {
             }
 
             // 2. Create Order on Backend
-            const orderResponse = await paymentAPI.createOrder(projectId);
+            const orderResponse = await paymentAPI.createOrder(projectId, couponCode);
             if (!orderResponse.data.success) {
                 throw new Error(orderResponse.data.message || "Failed to create order");
             }
 
-            const { id: orderId, currency, amount, keyId, project } = orderResponse.data.data;
+            const { freePurchase, id: orderId, currency, amount, keyId, project } = orderResponse.data.data;
+
+            if (freePurchase) {
+                toast.success("Payment Successful!");
+                router.push("/dashboard");
+                setIsProcessing(false);
+                return;
+            }
 
             // 3. Initialize Razorpay Options
             const options: RazorpayOptions = {

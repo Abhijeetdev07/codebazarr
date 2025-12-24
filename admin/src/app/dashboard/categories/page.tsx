@@ -34,7 +34,7 @@ export default function CategoriesPage() {
 
     const fetchCategories = async () => {
         try {
-            const res = await categoryAPI.getAll();
+            const res = await categoryAPI.getAll(true);
             if (res.data.success) {
                 setCategories(res.data.data);
             }

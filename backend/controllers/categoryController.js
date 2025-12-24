@@ -5,7 +5,8 @@ const Category = require('../models/Category');
 // @access  Public
 exports.getAllCategories = async (req, res) => {
   try {
-    const categories = await Category.find({ isActive: true })
+    const query = req.query.includeInactive === 'true' ? {} : { isActive: true };
+    const categories = await Category.find(query)
       .sort({ name: 1 })
       .select('-__v');
 
@@ -52,7 +53,7 @@ exports.getCategoryById = async (req, res) => {
 
   } catch (error) {
     console.error('Get category error:', error);
-    
+
     if (error.kind === 'ObjectId') {
       return res.status(404).json({
         success: false,
@@ -84,8 +85,8 @@ exports.createCategory = async (req, res) => {
     }
 
     // Check if category with same name already exists
-    const existingCategory = await Category.findOne({ 
-      name: { $regex: new RegExp(`^${name}$`, 'i') } 
+    const existingCategory = await Category.findOne({
+      name: { $regex: new RegExp(`^${name}$`, 'i') }
     });
 
     if (existingCategory) {
@@ -109,7 +110,7 @@ exports.createCategory = async (req, res) => {
 
   } catch (error) {
     console.error('Create category error:', error);
-    
+
     // Handle duplicate key error
     if (error.code === 11000) {
       return res.status(400).json({
@@ -172,7 +173,7 @@ exports.updateCategory = async (req, res) => {
 
   } catch (error) {
     console.error('Update category error:', error);
-    
+
     if (error.code === 11000) {
       return res.status(400).json({
         success: false,
@@ -204,7 +205,7 @@ exports.deleteCategory = async (req, res) => {
 
     // Check if category has projects
     const projectCount = await category.getProjectCount();
-    
+
     if (projectCount > 0) {
       return res.status(400).json({
         success: false,

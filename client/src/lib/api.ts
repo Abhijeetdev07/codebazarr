@@ -46,7 +46,7 @@ export const bannerAPI = {
 
 // Payment APIs (Razorpay)
 export const paymentAPI = {
-    createOrder: (projectId: string) => api.post('/payment/create-order', { projectId }),
+    createOrder: (projectId: string, couponCode?: string) => api.post('/payment/create-order', { projectId, couponCode }),
     verifyPayment: (paymentData: {
         razorpay_order_id: string;
         razorpay_payment_id: string;
@@ -58,6 +58,10 @@ export const paymentAPI = {
         razorpay_payment_id?: string;
         projectId?: string;
     }) => api.post('/payment/failed', paymentData),
+};
+
+export const couponAPI = {
+    apply: (projectId: string, code: string) => api.post('/coupons/apply', { projectId, code }),
 };
 
 // Order APIs

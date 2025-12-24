@@ -24,7 +24,7 @@ export const orderAPI = {
 };
 
 export const categoryAPI = {
-    getAll: () => api.get<{ success: boolean, count: number, data: any[] }>('/categories'),
+    getAll: (includeInactive?: boolean) => api.get<{ success: boolean, count: number, data: any[] }>('/categories', { params: { includeInactive } }),
     create: (data: any) => api.post<{ success: boolean, data: any }>('/categories', data),
     update: (id: string, data: any) => api.put<{ success: boolean, data: any }>(`/categories/${id}`, data),
     delete: (id: string) => api.delete<{ success: boolean }>(`/categories/${id}`),
@@ -44,4 +44,12 @@ export const bannerAPI = {
 export const reviewAPI = {
     getAll: (params?: any) => api.get<{ success: boolean, count: number, data: any[], pagination?: any, stats?: any }>('/reviews', { params }),
     delete: (id: string) => api.delete<{ success: boolean }>(`/reviews/${id}/admin`),
+};
+
+export const adminCouponAPI = {
+    create: (data: { code: string; percentOff: number; usageType: 'UNLIMITED' | 'ONCE_GLOBAL' }) =>
+        api.post<{ success: boolean, message?: string, data: any }>('/admin/coupons', data),
+    list: () => api.get<{ success: boolean, count: number, data: any[] }>('/admin/coupons'),
+    toggle: (id: string) => api.patch<{ success: boolean, message?: string, data: any }>(`/admin/coupons/${id}/toggle`),
+    delete: (id: string) => api.delete<{ success: boolean }>(`/admin/coupons/${id}`),
 };

@@ -57,6 +57,8 @@ app.use('/api/banners', require('./routes/banners'));
 app.use('/api/payment', require('./routes/payment'));
 app.use('/api/orders', require('./routes/orders'));
 app.use('/api/reviews', require('./routes/reviews'));
+app.use('/api/admin/coupons', require('./routes/adminCoupons'));
+app.use('/api/coupons', require('./routes/coupons'));
 
 // Error handling middleware
 app.use(require('./middleware/error'));

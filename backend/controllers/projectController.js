@@ -14,7 +14,13 @@ exports.getAllProjects = async (req, res) => {
     const skip = (page - 1) * limit;
 
     // Build query
-    let query = { isActive: true };
+    // Build query
+    let query = {};
+
+    // By default, show only active projects unless includeInactive is true
+    if (req.query.includeInactive !== 'true') {
+      query.isActive = true;
+    }
 
     // Category filter (accepts category ObjectId or category slug)
     if (req.query.category) {

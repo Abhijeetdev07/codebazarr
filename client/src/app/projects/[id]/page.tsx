@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { projectAPI, reviewAPI } from "@/lib/api";
+import { couponAPI, projectAPI, reviewAPI } from "@/lib/api";
 import { Project, Review } from "@/types";
 import { useAuth } from "@/context/AuthContext";
 import toast from "react-hot-toast";
@@ -38,6 +38,17 @@ export default function ProjectDetailsPage() {
     const [reviewComment, setReviewComment] = useState<string>("");
     const [submittingReview, setSubmittingReview] = useState(false);
 
+    const [couponInput, setCouponInput] = useState<string>("");
+    const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
+    const [appliedCouponCode, setAppliedCouponCode] = useState<string | null>(null);
+    const [couponError, setCouponError] = useState<string | null>(null);
+    const [pricing, setPricing] = useState<null | {
+        originalAmount: number;
+        discountAmount: number;
+        finalAmount: number;
+        percentOff?: number;
+    }>(null);
+
     useEffect(() => {
         const fetchProject = async () => {
             if (!id) return;
@@ -57,6 +68,13 @@ export default function ProjectDetailsPage() {
 
         fetchProject();
     }, [id]);
+
+    useEffect(() => {
+        setCouponInput("");
+        setAppliedCouponCode(null);
+        setPricing(null);
+        setCouponError(null);
+    }, [project?._id]);
 
     useEffect(() => {
         const fetchReviews = async () => {
@@ -79,8 +97,62 @@ export default function ProjectDetailsPage() {
 
     const handleBuyNow = () => {
         if (project && project._id) {
-            handlePayment(project._id);
+            handlePayment(project._id, appliedCouponCode || undefined);
         }
+    };
+
+    const handleApplyCoupon = async () => {
+        if (!project?._id) return;
+
+        const code = couponInput.trim();
+        if (!code) {
+            setAppliedCouponCode(null);
+            setPricing(null);
+            setCouponError(null);
+            return;
+        }
+
+        setIsApplyingCoupon(true);
+        setCouponError(null);
+        try {
+            const res = await couponAPI.apply(project._id, code);
+            if (!res.data?.success) {
+                throw new Error(res.data?.message || 'Failed to apply coupon');
+            }
+
+            const data = res.data.data;
+            setPricing({
+                originalAmount: Number(data.originalAmount || 0),
+                discountAmount: Number(data.discountAmount || 0),
+                finalAmount: Number(data.finalAmount || 0),
+                percentOff: Number(data.percentOff || 0),
+            });
+            setAppliedCouponCode(code.toUpperCase());
+            setCouponError(null);
+            toast.success('Coupon applied');
+        } catch (err: any) {
+            setAppliedCouponCode(null);
+            setPricing(null);
+            const apiMessage =
+                err?.response?.data?.message ||
+                err?.message ||
+                'Invalid coupon';
+
+            if (String(apiMessage).toLowerCase().includes('already been used')) {
+                setCouponError('This coupon is expired');
+            } else {
+                setCouponError(String(apiMessage));
+            }
+        } finally {
+            setIsApplyingCoupon(false);
+        }
+    };
+
+    const handleClearCoupon = () => {
+        setCouponInput("");
+        setAppliedCouponCode(null);
+        setPricing(null);
+        setCouponError(null);
     };
 
     const formatPrice = (price: number) => {
@@ -274,7 +346,25 @@ export default function ProjectDetailsPage() {
                             <div className="flex items-center justify-between mb-8 pb-8 border-b border-gray-100">
                                 <div>
                                     <p className="text-sm text-gray-500 mb-1">Price</p>
-                                    <p className="text-3xl font-bold text-gray-900">{formatPrice(project.price)}</p>
+                                    <p className="text-3xl font-bold text-gray-900">
+                                        {formatPrice(pricing ? pricing.finalAmount : project.price)}
+                                    </p>
+                                    {pricing ? (
+                                        <div className="mt-2 space-y-1 text-sm">
+                                            <div className="flex items-center justify-between text-gray-600">
+                                                <span>Original</span>
+                                                <span className="font-semibold">{formatPrice(pricing.originalAmount)}</span>
+                                            </div>
+                                            <div className="flex items-center justify-between text-green-700">
+                                                <span>Discount</span>
+                                                <span className="font-semibold">-{formatPrice(pricing.discountAmount)}</span>
+                                            </div>
+                                            <div className="flex items-center justify-between text-gray-900">
+                                                <span className="font-semibold">Final</span>
+                                                <span className="font-bold">{formatPrice(pricing.finalAmount)}</span>
+                                            </div>
+                                        </div>
+                                    ) : null}
                                 </div>
                                 <div className="flex flex-col items-end">
                                     <p className="text-sm text-gray-500 mb-1">Released</p>
@@ -283,6 +373,47 @@ export default function ProjectDetailsPage() {
                                         <span>{formatDate(project.createdAt)}</span>
                                     </div>
                                 </div>
+                            </div>
+
+                            <div className="mb-6">
+                                <p className="text-sm font-semibold text-gray-900 mb-2">Coupon Code</p>
+                                <div className="flex items-center gap-2">
+                                    <input
+                                        value={couponInput}
+                                        onChange={(e) => {
+                                            const next = e.target.value;
+                                            setCouponInput(next);
+                                            if (couponError) setCouponError(null);
+                                            if (appliedCouponCode && next.trim().toUpperCase() !== appliedCouponCode) {
+                                                setAppliedCouponCode(null);
+                                                setPricing(null);
+                                            }
+                                        }}
+                                        placeholder="Enter coupon"
+                                        className="w-40 h-11 px-3 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={handleApplyCoupon}
+                                        disabled={isApplyingCoupon}
+                                        className={`h-11 px-4 rounded-lg bg-indigo-600 text-white font-bold text-sm hover:bg-indigo-700 ${isApplyingCoupon ? 'opacity-70 cursor-not-allowed' : ''}`}
+                                    >
+                                        {isApplyingCoupon ? 'Applying...' : 'Apply'}
+                                    </button>
+                                </div>
+                                {appliedCouponCode ? (
+                                    <div className="mt-2 flex items-center justify-between text-sm">
+                                        <span className="text-green-700 font-semibold">Applied: {appliedCouponCode}</span>
+                                        <button type="button" onClick={handleClearCoupon} className="text-gray-600 hover:text-gray-900 font-semibold">
+                                            Clear
+                                        </button>
+                                    </div>
+                                ) : null}
+                                {couponError ? (
+                                    <div className="mt-2 text-sm font-semibold text-red-600">
+                                        {couponError}
+                                    </div>
+                                ) : null}
                             </div>
 
                             <div className="flex flex-wrap items-center gap-3 mb-8 justify-start">
@@ -491,7 +622,25 @@ export default function ProjectDetailsPage() {
                             <div className="flex items-center justify-between mb-8 pb-8 border-b border-gray-100">
                                 <div>
                                     <p className="text-sm text-gray-500 mb-1">Price</p>
-                                    <p className="text-3xl font-bold text-gray-900">{formatPrice(project.price)}</p>
+                                    <p className="text-3xl font-bold text-gray-900">
+                                        {formatPrice(pricing ? pricing.finalAmount : project.price)}
+                                    </p>
+                                    {pricing ? (
+                                        <div className="mt-2 space-y-1 text-sm">
+                                            <div className="flex items-center justify-between text-gray-600">
+                                                <span>Original</span>
+                                                <span className="font-semibold">{formatPrice(pricing.originalAmount)}</span>
+                                            </div>
+                                            <div className="flex items-center justify-between text-green-700">
+                                                <span>Discount</span>
+                                                <span className="font-semibold">-{formatPrice(pricing.discountAmount)}</span>
+                                            </div>
+                                            <div className="flex items-center justify-between text-gray-900">
+                                                <span className="font-semibold">Final</span>
+                                                <span className="font-bold">{formatPrice(pricing.finalAmount)}</span>
+                                            </div>
+                                        </div>
+                                    ) : null}
                                 </div>
                                 <div className="flex flex-col items-end">
                                     <p className="text-sm text-gray-500 mb-1">Released</p>
@@ -500,6 +649,47 @@ export default function ProjectDetailsPage() {
                                         <span>{formatDate(project.createdAt)}</span>
                                     </div>
                                 </div>
+                            </div>
+
+                            <div className="mb-6">
+                                <p className="text-sm font-semibold text-gray-900 mb-2">Coupon Code</p>
+                                <div className="flex items-center gap-2">
+                                    <input
+                                        value={couponInput}
+                                        onChange={(e) => {
+                                            const next = e.target.value;
+                                            setCouponInput(next);
+                                            if (couponError) setCouponError(null);
+                                            if (appliedCouponCode && next.trim().toUpperCase() !== appliedCouponCode) {
+                                                setAppliedCouponCode(null);
+                                                setPricing(null);
+                                            }
+                                        }}
+                                        placeholder="Enter coupon"
+                                        className="w-40 h-11 px-3 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={handleApplyCoupon}
+                                        disabled={isApplyingCoupon}
+                                        className={`h-11 px-4 rounded-lg bg-indigo-600 text-white font-bold text-sm hover:bg-indigo-700 ${isApplyingCoupon ? 'opacity-70 cursor-not-allowed' : ''}`}
+                                    >
+                                        {isApplyingCoupon ? 'Applying...' : 'Apply'}
+                                    </button>
+                                </div>
+                                {appliedCouponCode ? (
+                                    <div className="mt-2 flex items-center justify-between text-sm">
+                                        <span className="text-green-700 font-semibold">Applied: {appliedCouponCode}</span>
+                                        <button type="button" onClick={handleClearCoupon} className="text-gray-600 hover:text-gray-900 font-semibold">
+                                            Clear
+                                        </button>
+                                    </div>
+                                ) : null}
+                                {couponError ? (
+                                    <div className="mt-2 text-sm font-semibold text-red-600">
+                                        {couponError}
+                                    </div>
+                                ) : null}
                             </div>
 
                             <div className="space-y-4 mb-8">
