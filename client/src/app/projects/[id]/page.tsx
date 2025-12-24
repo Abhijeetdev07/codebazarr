@@ -136,7 +136,7 @@ export default function ProjectDetailsPage() {
                 err?.response?.data?.message ||
                 err?.message ||
                 'Invalid coupon';
-
+  
             if (String(apiMessage).toLowerCase().includes('already been used')) {
                 setCouponError('This coupon is expired');
             } else {

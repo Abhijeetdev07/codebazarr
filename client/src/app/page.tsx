@@ -39,7 +39,7 @@ export default function Home() {
       {/* Hero Section */}
       <HeroSlider />
 
-      {/* Categories Section */}
+      {/* Categories Section ♥️*/}
       <CategorySection />
 
       {/* Featured Projects Section */}
