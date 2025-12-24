@@ -37,7 +37,7 @@ export default function DashboardPage() {
 
                     setStats(prev => ({
                         ...prev,
-                        totalOrders: orders.length,
+                        totalOrders: completedOrders.length,
                         totalRevenue: revenue,
                         totalUsers: userRoleCount,
                         totalProjects: projectsRes.data.count || 0,
@@ -92,7 +92,6 @@ export default function DashboardPage() {
                     <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm lg:col-span-2">
                         <div className="flex items-center justify-between gap-4 mb-6">
                             <div className="h-6 bg-gray-200 rounded w-40"></div>
-                            <div className="h-9 bg-gray-200 rounded w-28"></div>
                         </div>
                         <div className="h-72 bg-gray-100 rounded-xl"></div>
                     </div>

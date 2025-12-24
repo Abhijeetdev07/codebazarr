@@ -1,11 +1,8 @@
 import type { Metadata } from "next";
-import { Outfit } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-
-const outfit = Outfit({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "CodeBazar - Buy & Sell Code Projects",
@@ -24,7 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={outfit.className}>
+      <body className="antialiased">
         <Providers>
           <div className="flex flex-col min-h-screen">
             <Navbar />
