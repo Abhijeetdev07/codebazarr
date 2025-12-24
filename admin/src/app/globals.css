@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "@fontsource-variable/outfit/index.css";
 
 :root {
   --background: #ffffff;
@@ -22,7 +23,7 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Outfit Variable", Outfit, Arial, Helvetica, sans-serif;
 }
 
 /* Make all input text darker for better visibility */
