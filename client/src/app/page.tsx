@@ -33,7 +33,9 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-200 flex flex-col">
+    <div className="min-h-screen bg-slate-50 flex flex-col relative font-sans">
+      <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-[0.4] pointer-events-none invert"></div>
+
       {/* Hero Section */}
       <HeroSlider />
 
@@ -41,7 +43,7 @@ export default function Home() {
       <CategorySection />
 
       {/* Featured Projects Section */}
-      <section className="py-10 bg-gray-200">
+      <section className="py-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
             <div>
@@ -90,7 +92,7 @@ export default function Home() {
                         <div className="h-6 w-14 bg-gray-100 rounded-md" />
                       </div>
 
-                      <div className="mt-auto pt-4 border-t border-gray-50 flex items-center justify-between">
+                      <div className="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between">
                         <div className="flex flex-col gap-2">
                           <div className="h-3 w-10 bg-gray-100 rounded" />
                           <div className="h-6 w-20 bg-gray-200 rounded" />

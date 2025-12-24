@@ -123,14 +123,15 @@ function ProjectsContent() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 py-8">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-slate-50 py-8 relative font-sans">
+            <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-[0.4] pointer-events-none invert"></div>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
                 {/* Header & Mobile Filter Toggle */}
                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-8">
                     <div>
-                        <h1 className="text-3xl font-bold text-gray-900">Explore Projects</h1>
-                        <p className="text-gray-600 mt-1">Discover premium code templates and scripts</p>
+                        <h1 className="text-3xl font-bold text-slate-900">Explore Projects</h1>
+                        <p className="text-slate-600 mt-1">Discover premium code templates and scripts</p>
                     </div>
 
                     <div className="self-start md:self-auto">
@@ -151,24 +152,24 @@ function ProjectsContent() {
 
                         {/* Search */}
                         <div>
-                            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-3">Search</h3>
+                            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-3">Search</h3>
                             <div className="relative">
                                 <input
                                     type="text"
                                     placeholder="Search projects..."
-                                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-gray-900 placeholder:text-gray-500 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                    className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg text-slate-900 placeholder:text-slate-500 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                 />
-                                <FiSearch className="absolute left-3 top-3 text-gray-400" />
+                                <FiSearch className="absolute left-3 top-3 text-slate-400" />
                             </div>
                         </div>
 
                         {/* Sort */}
                         <div>
-                            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-3">Sort By</h3>
+                            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-3">Sort By</h3>
                             <select
-                                className="w-full max-w-xs p-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white"
+                                className="w-full max-w-xs p-2 border border-slate-300 rounded-lg text-slate-900 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white"
                                 value={sortBy}
                                 onChange={(e) => setSortBy(e.target.value)}
                             >
@@ -181,7 +182,7 @@ function ProjectsContent() {
                         {/* Categories */}
                         <div>
                             <div className="flex items-center justify-between mb-3">
-                                <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider">Categories</h3>
+                                <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">Categories</h3>
                                 {selectedCategory && (
                                     <button onClick={() => setSelectedCategory("")} className="text-xs text-indigo-600 hover:text-indigo-800 font-medium">
                                         Clear
@@ -222,7 +223,7 @@ function ProjectsContent() {
                         {(searchTerm || selectedCategory || sortBy !== 'newest') && (
                             <button
                                 onClick={clearFilters}
-                                className="w-full py-2 px-4 bg-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-300 transition-colors flex items-center justify-center gap-2"
+                                className="w-full py-2 px-4 bg-slate-200 text-slate-700 font-medium rounded-lg hover:bg-slate-300 transition-colors flex items-center justify-center gap-2"
                             >
                                 <FiX /> Reset All Filters
                             </button>
@@ -235,21 +236,21 @@ function ProjectsContent() {
                         {loading ? (
                             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 justify-items-center">
                                 {[1, 2, 3, 4, 5, 6].map((i) => (
-                                    <div key={i} className="w-full min-w-[300px] max-w-[320px] h-80 bg-white rounded-2xl border border-gray-200 animate-pulse"></div>
+                                    <div key={i} className="w-full min-w-[300px] max-w-[320px] h-80 bg-white rounded-2xl border border-slate-200 animate-pulse"></div>
                                 ))}
                             </div>
                         ) : error ? (
-                            <div className="text-center py-20 bg-white rounded-2xl border border-gray-200">
+                            <div className="text-center py-20 bg-white rounded-2xl border border-slate-200">
                                 <p className="text-red-500">{error}</p>
                                 <button onClick={() => window.location.reload()} className="mt-4 text-indigo-600 hover:underline">Try Again</button>
                             </div>
                         ) : projects.length === 0 ? (
-                            <div className="text-center py-20 bg-white rounded-2xl border border-gray-200">
+                            <div className="text-center py-20 bg-white rounded-2xl border border-slate-200">
                                 <div className="flex justify-center mb-4">
-                                    <FiSearch className="h-12 w-12 text-gray-300" />
+                                    <FiSearch className="h-12 w-12 text-slate-300" />
                                 </div>
-                                <h3 className="text-lg font-medium text-gray-900">No projects found</h3>
-                                <p className="text-gray-500 mt-2">Try adjusting your search or filters.</p>
+                                <h3 className="text-lg font-medium text-slate-900">No projects found</h3>
+                                <p className="text-slate-500 mt-2">Try adjusting your search or filters.</p>
                                 <button
                                     onClick={clearFilters}
                                     className="mt-6 px-6 py-2 bg-indigo-50 text-indigo-600 font-medium rounded-full hover:bg-indigo-100 transition-colors"
@@ -277,13 +278,14 @@ function ProjectsContent() {
 export default function ProjectsPage() {
     return (
         <Suspense fallback={
-            <div className="min-h-screen bg-gray-50 py-8">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="min-h-screen bg-slate-50 py-8 relative font-sans">
+                <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-[0.4] pointer-events-none invert"></div>
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                     <div className="animate-pulse">
-                        <div className="h-8 bg-gray-200 rounded w-1/4 mb-8"></div>
+                        <div className="h-8 bg-slate-200 rounded w-1/4 mb-8"></div>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {[1, 2, 3, 4, 5, 6].map((i) => (
-                                <div key={i} className="h-64 bg-gray-200 rounded-xl"></div>
+                                <div key={i} className="h-64 bg-slate-200 rounded-xl"></div>
                             ))}
                         </div>
                     </div>

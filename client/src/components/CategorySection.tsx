@@ -37,24 +37,24 @@ export default function CategorySection() {
 
     if (loading) {
         return (
-            <section className="pt-10 bg-gray-200">
+            <section className="pt-10">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="mb-12">
-                        <div className="h-10 w-72 bg-gray-200 rounded mb-4 animate-pulse" />
-                        <div className="h-6 w-full max-w-3xl bg-gray-100 rounded animate-pulse" />
+                        <div className="h-10 w-72 bg-slate-200 rounded mb-4 animate-pulse" />
+                        <div className="h-6 w-full max-w-3xl bg-slate-100 rounded animate-pulse" />
                     </div>
 
                     <div className="flex overflow-x-auto pb-8 gap-6 px-4 snap-x hide-scrollbar mx-auto w-fit max-w-full">
                         {[1, 2, 3, 4, 5, 6].map((i) => (
                             <div
                                 key={i}
-                                className="relative bg-white rounded-2xl p-6 shadow-sm border border-gray-100 min-w-[200px] flex-shrink-0 snap-center animate-pulse"
+                                className="relative bg-white rounded-2xl p-6 shadow-sm border border-slate-100 min-w-[200px] flex-shrink-0 snap-center animate-pulse"
                             >
                                 <div className="flex flex-col items-center text-center space-y-4">
-                                    <div className="h-14 w-14 rounded-full bg-gray-100" />
+                                    <div className="h-14 w-14 rounded-full bg-slate-100" />
                                     <div className="w-full space-y-2">
-                                        <div className="h-5 w-28 bg-gray-200 rounded mx-auto" />
-                                        <div className="h-4 w-20 bg-gray-100 rounded mx-auto" />
+                                        <div className="h-5 w-28 bg-slate-200 rounded mx-auto" />
+                                        <div className="h-4 w-20 bg-slate-100 rounded mx-auto" />
                                     </div>
                                 </div>
                             </div>
@@ -70,13 +70,13 @@ export default function CategorySection() {
     }
 
     return (
-        <section className="pt-10 bg-gray-200">
+        <section className="pt-10">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className=" mb-12">
-                    <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                    <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
                         Browse by Category
                     </h2>
-                    <p className="text-lg text-gray-600 max-w-3xl">
+                    <p className="text-lg text-slate-600 max-w-3xl">
                         Find the perfect project for your needs from our diverse collection of high-quality code.
                     </p>
                 </div>
@@ -92,7 +92,7 @@ export default function CategorySection() {
                             <Link
                                 href={`/projects?category=${category.slug || category._id}`}
                                 key={category._id}
-                                className="group relative bg-white rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-indigo-100 transform hover:-translate-y-1 min-w-[200px] flex-shrink-0 snap-center"
+                                className="group relative bg-white rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-100 hover:border-indigo-100 transform hover:-translate-y-1 min-w-[200px] flex-shrink-0 snap-center"
                             >
                                 <div className="flex flex-col items-center text-center space-y-4">
                                     <div className="h-14 w-14 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-300">
@@ -100,11 +100,11 @@ export default function CategorySection() {
                                     </div>
 
                                     <div>
-                                        <h3 className="text-lg font-bold text-gray-900 group-hover:text-indigo-600 transition-colors whitespace-nowrap">
+                                        <h3 className="text-lg font-bold text-slate-900 group-hover:text-indigo-600 transition-colors whitespace-nowrap">
                                             {category.name}
                                         </h3>
                                         {category.projectCount !== undefined && (
-                                            <p className="text-sm text-gray-500 mt-1">
+                                            <p className="text-sm text-slate-500 mt-1">
                                                 {category.projectCount} Projects
                                             </p>
                                         )}

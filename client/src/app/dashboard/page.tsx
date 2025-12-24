@@ -119,8 +119,9 @@ export default function DashboardPage() {
 
     if (authLoading || (loading && user)) {
         return (
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
+            <div className="min-h-screen bg-slate-50 flex items-center justify-center relative">
+                <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-[0.4] pointer-events-none invert"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600 relative z-10"></div>
             </div>
         );
     }
@@ -128,8 +129,9 @@ export default function DashboardPage() {
     if (!user) return null; // Prevent flash before redirect
 
     return (
-        <div className="min-h-screen bg-gray-50 pt-4 pb-12">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-slate-50 pt-4 pb-12 relative font-sans">
+            <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-[0.4] pointer-events-none invert"></div>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
                 {/* Header Section */}
                 <div className="p-2 mb-4 text-left gap-6">
@@ -196,85 +198,85 @@ export default function DashboardPage() {
                                     const isRetryable = !isCompleted && (String(order.status || '').toLowerCase() === 'pending' || String(order.status || '').toLowerCase() === 'failed');
 
                                     return (
-                                    <div key={order._id} className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6 flex flex-col sm:flex-row gap-6 transition-all hover:shadow-md">
-                                        {/* Project Image */}
-                                        <div className="relative h-48 sm:h-32 w-full sm:w-48 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100">
-                                            <Image
-                                                src={order.projectId.images[0] || "/placeholder-project.png"}
-                                                alt={order.projectId.title}
-                                                fill
-                                                className="object-cover"
-                                            />
-                                        </div>
-
-                                        {/* Details */}
-                                        <div className="flex-grow flex flex-col justify-between">
-                                            <div>
-                                                <div className="flex justify-between items-start">
-                                                    <h3 className="text-lg font-bold text-gray-900 mb-2">
-                                                        {order.projectId.title}
-                                                    </h3>
-                                                    <span className={`px-3 py-1 text-xs font-bold uppercase rounded-full ${statusMeta.pillClass}`}>
-                                                        {statusMeta.label}
-                                                    </span>
-                                                </div>
-                                                <p className="text-sm text-gray-600 line-clamp-2 mb-4">
-                                                    {order.projectId.description}
-                                                </p>
+                                        <div key={order._id} className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6 flex flex-col sm:flex-row gap-6 transition-all hover:shadow-md">
+                                            {/* Project Image */}
+                                            <div className="relative h-48 sm:h-32 w-full sm:w-48 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100">
+                                                <Image
+                                                    src={order.projectId.images[0] || "/placeholder-project.png"}
+                                                    alt={order.projectId.title}
+                                                    fill
+                                                    className="object-cover"
+                                                />
                                             </div>
 
-                                            <div className="flex flex-wrap items-center gap-4 sm:gap-8 text-sm text-gray-500">
-                                                <div className="flex items-center gap-1">
-                                                    <FiCalendar className="text-gray-400" />
-                                                    <span>{formatDate(order.createdAt)}</span>
+                                            {/* Details */}
+                                            <div className="flex-grow flex flex-col justify-between">
+                                                <div>
+                                                    <div className="flex justify-between items-start">
+                                                        <h3 className="text-lg font-bold text-gray-900 mb-2">
+                                                            {order.projectId.title}
+                                                        </h3>
+                                                        <span className={`px-3 py-1 text-xs font-bold uppercase rounded-full ${statusMeta.pillClass}`}>
+                                                            {statusMeta.label}
+                                                        </span>
+                                                    </div>
+                                                    <p className="text-sm text-gray-600 line-clamp-2 mb-4">
+                                                        {order.projectId.description}
+                                                    </p>
                                                 </div>
-                                                <div className="font-medium text-gray-900">
-                                                    {formatPrice(order.amount)}
+
+                                                <div className="flex flex-wrap items-center gap-4 sm:gap-8 text-sm text-gray-500">
+                                                    <div className="flex items-center gap-1">
+                                                        <FiCalendar className="text-gray-400" />
+                                                        <span>{formatDate(order.createdAt)}</span>
+                                                    </div>
+                                                    <div className="font-medium text-gray-900">
+                                                        {formatPrice(order.amount)}
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
 
-                                        {/* Actions */}
-                                        <div className="flex flex-col gap-3 justify-center sm:w-48 flex-shrink-0 border-t sm:border-t-0 sm:border-l border-gray-100 pt-4 sm:pt-0 sm:pl-6">
-                                            {order.projectId.sourceCodeUrl && isCompleted ? (
-                                                <a
-                                                    href={order.projectId.sourceCodeUrl}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-600 font-semibold rounded-lg hover:bg-indigo-100 transition-colors"
+                                            {/* Actions */}
+                                            <div className="flex flex-col gap-3 justify-center sm:w-48 flex-shrink-0 border-t sm:border-t-0 sm:border-l border-gray-100 pt-4 sm:pt-0 sm:pl-6">
+                                                {order.projectId.sourceCodeUrl && isCompleted ? (
+                                                    <a
+                                                        href={order.projectId.sourceCodeUrl}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-600 font-semibold rounded-lg hover:bg-indigo-100 transition-colors"
+                                                    >
+                                                        <FiDownload /> Download Code
+                                                    </a>
+                                                ) : isRetryable ? (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => router.push(`/projects/${order.projectId._id}`)}
+                                                        className={`w-full flex items-center justify-center gap-2 px-4 py-2 font-semibold rounded-lg transition-colors ${String(order.status || '').toLowerCase() === 'failed'
+                                                            ? 'bg-red-50 text-red-600 hover:bg-red-100'
+                                                            : 'bg-yellow-50 text-yellow-700 hover:bg-yellow-100'
+                                                            }`}
+                                                        title="Retry payment"
+                                                    >
+                                                        <FiRefreshCw /> Try Again
+                                                    </button>
+                                                ) : (
+                                                    <button
+                                                        type="button"
+                                                        disabled
+                                                        className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-gray-50 text-gray-400 font-semibold rounded-lg cursor-not-allowed"
+                                                        title="Download link not available"
+                                                    >
+                                                        <FiDownload /> Download Code
+                                                    </button>
+                                                )}
+                                                <Link
+                                                    href={`/projects/${order.projectId._id}`}
+                                                    className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-gray-200 text-gray-600 font-semibold rounded-lg hover:bg-gray-50 transition-colors"
                                                 >
-                                                    <FiDownload /> Download Code
-                                                </a>
-                                            ) : isRetryable ? (
-                                                <button
-                                                    type="button"
-                                                    onClick={() => router.push(`/projects/${order.projectId._id}`)}
-                                                    className={`w-full flex items-center justify-center gap-2 px-4 py-2 font-semibold rounded-lg transition-colors ${String(order.status || '').toLowerCase() === 'failed'
-                                                        ? 'bg-red-50 text-red-600 hover:bg-red-100'
-                                                        : 'bg-yellow-50 text-yellow-700 hover:bg-yellow-100'
-                                                        }`}
-                                                    title="Retry payment"
-                                                >
-                                                    <FiRefreshCw /> Try Again
-                                                </button>
-                                            ) : (
-                                                <button
-                                                    type="button"
-                                                    disabled
-                                                    className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-gray-50 text-gray-400 font-semibold rounded-lg cursor-not-allowed"
-                                                    title="Download link not available"
-                                                >
-                                                    <FiDownload /> Download Code
-                                                </button>
-                                            )}
-                                            <Link
-                                                href={`/projects/${order.projectId._id}`}
-                                                className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-gray-200 text-gray-600 font-semibold rounded-lg hover:bg-gray-50 transition-colors"
-                                            >
-                                                View Details
-                                            </Link>
+                                                    View Details
+                                                </Link>
+                                            </div>
                                         </div>
-                                    </div>
                                     );
                                 })}
                             </div>
