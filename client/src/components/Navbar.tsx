@@ -32,7 +32,7 @@ export default function Navbar() {
 
     return (
         <>
-            <nav className={`sticky top-0 w-full z-50 transition-all duration-300 bg-[#EDFFF0] backdrop-blur-md border-b border-gray-100 py-3 ${scrolled ? 'shadow-sm' : ''}`}>
+            <nav className={`sticky top-0 w-full z-50 transition-all duration-300 bg-white backdrop-blur-md border-b border-gray-500 py-3 ${scrolled ? 'shadow-sm' : ''}`}>
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between items-center">
                         {/* Logo */}
