@@ -129,7 +129,6 @@ export default function ProjectDetailsPage() {
             });
             setAppliedCouponCode(code.toUpperCase());
             setCouponError(null);
-            toast.success('Coupon applied');
         } catch (err: any) {
             setAppliedCouponCode(null);
             setPricing(null);
@@ -230,16 +229,18 @@ export default function ProjectDetailsPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
+            <div className="min-h-screen bg-slate-50 flex items-center justify-center relative font-sans">
+                <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-[0.4] pointer-events-none invert"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600 relative z-10"></div>
             </div>
         );
     }
 
     if (error || !project) {
         return (
-            <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-4">
-                <div className="text-center">
+            <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center px-4 relative font-sans">
+                <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-[0.4] pointer-events-none invert"></div>
+                <div className="text-center relative z-10">
                     <h2 className="text-2xl font-bold text-gray-900 mb-2">Project Not Found</h2>
                     <p className="text-gray-600 mb-6">{error || "The project you're looking for doesn't exist."}</p>
                     <Link
@@ -254,8 +255,9 @@ export default function ProjectDetailsPage() {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 py-8 lg:py-12">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-slate-50 py-8 lg:py-12 relative font-sans">
+            <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-[0.4] pointer-events-none invert"></div>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
                 {/* Breadcrumb / Back Link */}
                 <Link href="/projects" className="inline-flex items-center gap-2 text-gray-500 hover:text-indigo-600 font-medium mb-8 transition-colors">
@@ -343,7 +345,7 @@ export default function ProjectDetailsPage() {
                                 <span className="text-xs text-gray-500">({reviewCount} reviews)</span>
                             </div>
 
-                            <div className="flex items-center justify-between mb-8 pb-8 border-b border-gray-100">
+                            <div className="flex items-center justify-between pb-4 border-b border-gray-100">
                                 <div>
                                     <p className="text-sm text-gray-500 mb-1">Price</p>
                                     <p className="text-3xl font-bold text-gray-900">
@@ -619,7 +621,7 @@ export default function ProjectDetailsPage() {
                                 <span className="text-xs text-gray-500">({reviewCount} reviews)</span>
                             </div>
 
-                            <div className="flex items-center justify-between mb-8 pb-8 border-b border-gray-100">
+                            <div className="flex items-center justify-between mb-2 pb-2 border-b border-gray-100">
                                 <div>
                                     <p className="text-sm text-gray-500 mb-1">Price</p>
                                     <p className="text-3xl font-bold text-gray-900">
