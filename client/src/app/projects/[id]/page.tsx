@@ -13,6 +13,7 @@ import { FaStar, FaRegStar } from "react-icons/fa";
 import { useRazorpay } from "@/hooks/useRazorpay";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Thumbs, FreeMode } from "swiper/modules";
+import ProjectSidebar from "@/components/ProjectSidebar";
 
 // Import Swiper styles
 import "swiper/css";
@@ -136,7 +137,7 @@ export default function ProjectDetailsPage() {
                 err?.response?.data?.message ||
                 err?.message ||
                 'Invalid coupon';
-  
+
             if (String(apiMessage).toLowerCase().includes('already been used')) {
                 setCouponError('This coupon is expired');
             } else {
@@ -325,146 +326,26 @@ export default function ProjectDetailsPage() {
                         </div>
 
                         {/* Sidebar content - Shows here on mobile/tablet only */}
-                        <div className="lg:hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-
-                            <span className="inline-block px-3 py-1 bg-indigo-50 text-indigo-700 text-xs font-bold uppercase tracking-wider rounded-full mb-4">
-                                {project.category?.name || "Uncategorized"}
-                            </span>
-
-                            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4 leading-tight">
-                                {project.title}
-                            </h1>
-
-                            <div className="flex items-center gap-2 mb-6">
-                                <div className="flex items-center gap-1">
-                                    <FiStar className={`h-4 w-4 ${reviewCount > 0 ? 'text-amber-500' : 'text-gray-300'}`} />
-                                    <span className="text-sm font-semibold text-gray-800">
-                                        {reviewCount > 0 ? avgRating.toFixed(1) : '0.0'}
-                                    </span>
-                                </div>
-                                <span className="text-xs text-gray-500">({reviewCount} reviews)</span>
-                            </div>
-
-                            <div className="flex items-center justify-between pb-4 border-b border-gray-100">
-                                <div>
-                                    <p className="text-sm text-gray-500 mb-1">Price</p>
-                                    <p className="text-3xl font-bold text-gray-900">
-                                        {formatPrice(pricing ? pricing.finalAmount : project.price)}
-                                    </p>
-                                    {pricing ? (
-                                        <div className="mt-2 space-y-1 text-sm">
-                                            <div className="flex items-center justify-between text-gray-600">
-                                                <span>Original</span>
-                                                <span className="font-semibold">{formatPrice(pricing.originalAmount)}</span>
-                                            </div>
-                                            <div className="flex items-center justify-between text-green-700">
-                                                <span>Discount</span>
-                                                <span className="font-semibold">-{formatPrice(pricing.discountAmount)}</span>
-                                            </div>
-                                            <div className="flex items-center justify-between text-gray-900">
-                                                <span className="font-semibold">Final</span>
-                                                <span className="font-bold">{formatPrice(pricing.finalAmount)}</span>
-                                            </div>
-                                        </div>
-                                    ) : null}
-                                </div>
-                                <div className="flex flex-col items-end">
-                                    <p className="text-sm text-gray-500 mb-1">Released</p>
-                                    <div className="flex items-center gap-1 text-gray-700 font-medium">
-                                        <FiCalendar className="h-4 w-4 text-gray-400" />
-                                        <span>{formatDate(project.createdAt)}</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="mb-6">
-                                <p className="text-sm font-semibold text-gray-900 mb-2">Coupon Code</p>
-                                <div className="flex items-center gap-2">
-                                    <input
-                                        value={couponInput}
-                                        onChange={(e) => {
-                                            const next = e.target.value;
-                                            setCouponInput(next);
-                                            if (couponError) setCouponError(null);
-                                            if (appliedCouponCode && next.trim().toUpperCase() !== appliedCouponCode) {
-                                                setAppliedCouponCode(null);
-                                                setPricing(null);
-                                            }
-                                        }}
-                                        placeholder="Enterr Coupon"
-                                        className="w-40 h-11 px-3 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={handleApplyCoupon}
-                                        disabled={isApplyingCoupon}
-                                        className={`h-11 px-4 rounded-lg bg-indigo-600 text-white font-bold text-sm hover:bg-indigo-700 ${isApplyingCoupon ? 'opacity-70 cursor-not-allowed' : ''}`}
-                                    >
-                                        {isApplyingCoupon ? 'Applying...' : 'Apply'}
-                                    </button>
-                                </div>
-                                {appliedCouponCode ? (
-                                    <div className="mt-2 flex items-center justify-between text-sm">
-                                        <span className="text-green-700 font-semibold">Applied: {appliedCouponCode}</span>
-                                        <button type="button" onClick={handleClearCoupon} className="text-gray-600 hover:text-gray-900 font-semibold">
-                                            Clear
-                                        </button>
-                                    </div>
-                                ) : null}
-                                {couponError ? (
-                                    <div className="mt-2 text-sm font-semibold text-red-600">
-                                        {couponError}
-                                    </div>
-                                ) : null}
-                            </div>
-
-                            <div className="flex flex-wrap items-center gap-3 mb-8 justify-start">
-                                <button
-                                    onClick={handleBuyNow}
-                                    disabled={isProcessing}
-                                    className={`inline-flex items-center justify-center gap-2 py-3 px-4 bg-indigo-600 text-white font-bold text-sm rounded-xl hover:bg-indigo-700 active:scale-95 transition-all shadow-lg hover:shadow-indigo-200 whitespace-nowrap ${isProcessing ? 'opacity-70 cursor-not-allowed' : ''}`}
-                                >
-                                    {isProcessing ? (
-                                        <>
-                                            <div className="animate-spin rounded-full h-5 w-5"></div>
-                                            Processing...
-                                        </>
-                                    ) : (
-                                        <>
-                                            <FiShoppingCart className="h-5 w-5" /> Buy Now
-                                        </>
-                                    )}
-                                </button>
-
-                                {project.demoUrl && (
-                                    <a
-                                        href={project.demoUrl}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="inline-flex items-center justify-center gap-2 py-3 px-4 bg-white text-gray-700 font-bold text-sm rounded-xl border-2 border-gray-200 hover:border-indigo-600 hover:text-indigo-600 active:bg-gray-50 transition-all whitespace-nowrap"
-                                    >
-                                        <FiExternalLink className="h-5 w-5" /> Live Preview
-                                    </a>
-                                )}
-                            </div>
-
-                            {/* Technologies */}
-                            <div>
-                                <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4 flex items-center gap-2">
-                                    <FiLayers className="h-4 w-4" /> Technologies
-                                </h3>
-                                <div className="flex flex-wrap gap-2">
-                                    {project.technologies.map((tech, index) => (
-                                        <span
-                                            key={index}
-                                            className="px-3 py-1.5 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg border border-gray-200"
-                                        >
-                                            {tech}
-                                        </span>
-                                    ))}
-                                </div>
-                            </div>
-
+                        <div className="lg:hidden">
+                            <ProjectSidebar
+                                project={project}
+                                pricing={pricing}
+                                couponInput={couponInput}
+                                isApplyingCoupon={isApplyingCoupon}
+                                appliedCouponCode={appliedCouponCode}
+                                couponError={couponError}
+                                isProcessing={isProcessing}
+                                handleApplyCoupon={handleApplyCoupon}
+                                handleClearCoupon={handleClearCoupon}
+                                handleBuyNow={handleBuyNow}
+                                setCouponInput={setCouponInput}
+                                setCouponError={setCouponError}
+                                formatPrice={formatPrice}
+                                formatDate={formatDate}
+                                avgRating={avgRating}
+                                reviewCount={reviewCount}
+                                isMobile={true}
+                            />
                         </div>
 
                         {/* Features List */}
@@ -601,153 +482,30 @@ export default function ProjectDetailsPage() {
 
                     {/* RIGHT COLUMN - Sticky Sidebar (Desktop only) */}
                     <div className="hidden lg:block lg:col-span-1 order-2">
-                        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 sticky top-24">
-
-                            <span className="inline-block px-3 py-1 bg-indigo-50 text-indigo-700 text-xs font-bold uppercase tracking-wider rounded-full mb-4">
-                                {project.category?.name || "Uncategorized"}
-                            </span>
-
-                            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4 leading-tight">
-                                {project.title}
-                            </h1>
-
-                            <div className="flex items-center gap-2 mb-6">
-                                <div className="flex items-center gap-1">
-                                    <FiStar className={`h-4 w-4 ${reviewCount > 0 ? 'text-amber-500' : 'text-gray-300'}`} />
-                                    <span className="text-sm font-semibold text-gray-800">
-                                        {reviewCount > 0 ? avgRating.toFixed(1) : '0.0'}
-                                    </span>
-                                </div>
-                                <span className="text-xs text-gray-500">({reviewCount} reviews)</span>
-                            </div>
-
-                            <div className="flex items-center justify-between mb-2 pb-2 border-b border-gray-100">
-                                <div>
-                                    <p className="text-sm text-gray-500 mb-1">Price</p>
-                                    <p className="text-3xl font-bold text-gray-900">
-                                        {formatPrice(pricing ? pricing.finalAmount : project.price)}
-                                    </p>
-                                    {pricing ? (
-                                        <div className="mt-2 space-y-1 text-sm">
-                                            <div className="flex items-center justify-between text-gray-600">
-                                                <span>Original</span>
-                                                <span className="font-semibold">{formatPrice(pricing.originalAmount)}</span>
-                                            </div>
-                                            <div className="flex items-center justify-between text-green-700">
-                                                <span>Discount</span>
-                                                <span className="font-semibold">-{formatPrice(pricing.discountAmount)}</span>
-                                            </div>
-                                            <div className="flex items-center justify-between text-gray-900">
-                                                <span className="font-semibold">Final</span>
-                                                <span className="font-bold">{formatPrice(pricing.finalAmount)}</span>
-                                            </div>
-                                        </div>
-                                    ) : null}
-                                </div>
-                                <div className="flex flex-col items-end">
-                                    <p className="text-sm text-gray-500 mb-1">Released</p>
-                                    <div className="flex items-center gap-1 text-gray-700 font-medium">
-                                        <FiCalendar className="h-4 w-4 text-gray-400" />
-                                        <span>{formatDate(project.createdAt)}</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="mb-4">
-                                <p className="text-sm font-semibold text-gray-900 mb-2">Coupon Code</p>
-                                <div className="flex items-center gap-2">
-                                    <input
-                                        value={couponInput}
-                                        onChange={(e) => {
-                                            const next = e.target.value;
-                                            setCouponInput(next);
-                                            if (couponError) setCouponError(null);
-                                            if (appliedCouponCode && next.trim().toUpperCase() !== appliedCouponCode) {
-                                                setAppliedCouponCode(null);
-                                                setPricing(null);
-                                            }
-                                        }}
-                                        placeholder="Enterr Coupon"
-                                        className="w-40 h-11 px-3 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={handleApplyCoupon}
-                                        disabled={isApplyingCoupon}
-                                        className={`h-11 px-4 rounded-lg bg-indigo-600 text-white font-bold text-sm hover:bg-indigo-700 ${isApplyingCoupon ? 'opacity-70 cursor-not-allowed' : ''}`}
-                                    >
-                                        {isApplyingCoupon ? 'Applying...' : 'Apply'}
-                                    </button>
-                                </div>
-                                {appliedCouponCode ? (
-                                    <div className="mt-2 flex items-center justify-between text-sm">
-                                        <span className="text-green-700 font-semibold">Applied: {appliedCouponCode}</span>
-                                        <button type="button" onClick={handleClearCoupon} className="text-gray-600 hover:text-gray-900 font-semibold">
-                                            Clear
-                                        </button>
-                                    </div>
-                                ) : null}
-                                {couponError ? (
-                                    <div className="mt-2 text-sm font-semibold text-red-600">
-                                        {couponError}
-                                    </div>
-                                ) : null}
-                            </div>
-
-                            <div className="mb-4 flex items-center justify-center gap-3">
-                                <button
-                                    onClick={handleBuyNow}
-                                    disabled={isProcessing}
-                                    className={` flex items-center bg-indigo-600 justify-center gap-2 px-4 py-3 text-white font-bold rounded-xl border-2 border-gray-200 hover:bg-indigo-700 active:bg-gray-50 transition-all shadow-lg hover:shadow-indigo-200 ${isProcessing ? 'opacity-70 cursor-not-allowed' : ''}`}
-                                >
-                                    {isProcessing ? (
-                                        <>
-                                            <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
-                                            Processing...
-                                        </>
-                                    ) : (
-                                        <>
-                                            <FiShoppingCart className="h-5 w-5" /> Buy Now
-                                        </>
-                                    )}
-                                </button>
-                                {project.demoUrl && (
-                                    <button
-                                        className={`flex items-center justify-center gap-2 py-3 px-4 bg-white text-gray-700 font-bold rounded-xl border-2 border-gray-200 hover:border-indigo-600 hover:text-indigo-600 active:bg-gray-50 transition-all`}
-                                    >
-                                        <a
-                                            href={project.demoUrl}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="flex gap-2"
-                                        >
-                                            <FiExternalLink className="h-5 w-5" />Preview
-                                        </a>
-                                    </button>
-                                )}
-                            </div>
-
-                            {/* Technologies */}
-                            <div>
-                                <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4 flex items-center gap-2">
-                                    <FiLayers className="h-4 w-4" /> Technologies
-                                </h3>
-                                <div className="flex flex-wrap gap-2">
-                                    {project.technologies.map((tech, index) => (
-                                        <span
-                                            key={index}
-                                            className="px-3 py-1.5 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg border border-gray-200"
-                                        >
-                                            {tech}
-                                        </span>
-                                    ))}
-                                </div>
-                            </div>
-
+                        <div className="sticky top-24">
+                            <ProjectSidebar
+                                project={project}
+                                pricing={pricing}
+                                couponInput={couponInput}
+                                isApplyingCoupon={isApplyingCoupon}
+                                appliedCouponCode={appliedCouponCode}
+                                couponError={couponError}
+                                isProcessing={isProcessing}
+                                handleApplyCoupon={handleApplyCoupon}
+                                handleClearCoupon={handleClearCoupon}
+                                handleBuyNow={handleBuyNow}
+                                setCouponInput={setCouponInput}
+                                setCouponError={setCouponError}
+                                formatPrice={formatPrice}
+                                formatDate={formatDate}
+                                avgRating={avgRating}
+                                reviewCount={reviewCount}
+                                isMobile={false}
+                            />
                         </div>
                     </div>
-
                 </div>
+
             </div>
         </div>
     );
