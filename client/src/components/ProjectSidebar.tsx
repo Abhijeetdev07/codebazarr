@@ -1,7 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import { FiShoppingCart, FiExternalLink, FiLayers, FiCalendar, FiStar } from "react-icons/fi";
 import { Project } from "@/types";
+import CheckoutModal from "./CheckoutModal";
 
 interface ProjectSidebarProps {
     project: Project;
@@ -47,6 +49,8 @@ export default function ProjectSidebar({
     reviewCount,
     isMobile = false
 }: ProjectSidebarProps) {
+    const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+
     return (
         <div className={`bg-white rounded-2xl shadow-sm border border-gray-100 ${isMobile ? 'p-6' : 'p-6 md:p-8'}`}>
             <span className="inline-block px-3 py-1 bg-indigo-50 text-indigo-700 text-xs font-bold uppercase tracking-wider rounded-full mb-4">
@@ -67,28 +71,18 @@ export default function ProjectSidebar({
                 <span className="text-xs text-gray-500">({reviewCount} reviews)</span>
             </div>
 
-            <div className={`flex items-center justify-between pb-4 border-b border-gray-100 ${isMobile ? '' : 'mb-2 pb-2'}`}>
+            <div className={`flex items-center justify-between pb-4 border-b border-gray-100 ${isMobile ? '' : 'mb-6'}`}>
                 <div>
                     <p className="text-sm text-gray-500 mb-1">Price</p>
                     <p className="text-3xl font-bold text-gray-900">
                         {formatPrice(pricing ? pricing.finalAmount : project.price)}
                     </p>
-                    {pricing ? (
-                        <div className="mt-2 space-y-1 text-sm">
-                            <div className="flex items-center justify-between text-gray-600">
-                                <span>Original</span>
-                                <span className="font-semibold">{formatPrice(pricing.originalAmount)}</span>
-                            </div>
-                            <div className="flex items-center justify-between text-green-700">
-                                <span>Discount</span>
-                                <span className="font-semibold">-{formatPrice(pricing.discountAmount)}</span>
-                            </div>
-                            <div className="flex items-center justify-between text-gray-900">
-                                <span className="font-semibold">Final</span>
-                                <span className="font-bold">{formatPrice(pricing.finalAmount)}</span>
-                            </div>
-                        </div>
-                    ) : null}
+                    {/* Simplified pricing display in sidebar, full breakdown in modal */}
+                    {pricing && (
+                        <p className="text-sm text-green-600 font-medium">
+                            {pricing.percentOff}% OFF applied
+                        </p>
+                    )}
                 </div>
                 <div className="flex flex-col items-end">
                     <p className="text-sm text-gray-500 mb-1">Released</p>
@@ -99,59 +93,14 @@ export default function ProjectSidebar({
                 </div>
             </div>
 
-            <div className={`${isMobile ? 'mb-6' : 'mb-4 mt-4'}`}>
-                <p className="text-sm font-semibold text-gray-900 mb-2">Coupon Code</p>
-                <div className="flex items-center gap-2">
-                    <input
-                        value={couponInput}
-                        onChange={(e) => {
-                            const next = e.target.value;
-                            setCouponInput(next);
-                            if (couponError) setCouponError(null);
-                        }}
-                        placeholder="Enter Coupon"
-                        className="w-40 h-11 px-3 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                    />
-                    <button
-                        type="button"
-                        onClick={handleApplyCoupon}
-                        disabled={isApplyingCoupon}
-                        className={`h-11 px-4 rounded-lg bg-indigo-600 text-white font-bold text-sm hover:bg-indigo-700 ${isApplyingCoupon ? 'opacity-70 cursor-not-allowed' : ''}`}
-                    >
-                        {isApplyingCoupon ? 'Applying...' : 'Apply'}
-                    </button>
-                </div>
-                {appliedCouponCode ? (
-                    <div className="mt-2 flex items-center justify-between text-sm">
-                        <span className="text-green-700 font-semibold">Applied: {appliedCouponCode}</span>
-                        <button type="button" onClick={handleClearCoupon} className="text-gray-600 hover:text-gray-900 font-semibold">
-                            Clear
-                        </button>
-                    </div>
-                ) : null}
-                {couponError ? (
-                    <div className="mt-2 text-sm font-semibold text-red-600">
-                        {couponError}
-                    </div>
-                ) : null}
-            </div>
+            {/* Coupon UI removed from here, moving to Modal */}
 
-            <div className={`flex items-center gap-3 ${isMobile ? 'mb-8 justify-start flex-wrap' : 'mb-4 justify-center'}`}>
+            <div className={`flex items-center gap-3 w-full ${isMobile ? 'mb-8' : 'mb-8'}`}>
                 <button
-                    onClick={handleBuyNow}
-                    disabled={isProcessing}
-                    className={`inline-flex items-center justify-center gap-2 py-3 px-4 bg-indigo-600 text-white font-bold text-sm rounded-xl hover:bg-indigo-700 active:scale-95 transition-all shadow-lg hover:shadow-indigo-200 whitespace-nowrap ${isProcessing ? 'opacity-70 cursor-not-allowed' : ''}`}
+                    onClick={() => setIsCheckoutOpen(true)}
+                    className="flex-1 h-12 max-[420px]:h-10 inline-flex items-center justify-center gap-2 px-6 max-[420px]:px-2 bg-indigo-600 text-white font-bold text-sm max-[420px]:text-xs rounded-xl hover:bg-indigo-700 active:scale-95 transition-all shadow-lg hover:shadow-indigo-200 whitespace-nowrap"
                 >
-                    {isProcessing ? (
-                        <>
-                            <div className={`animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent`}></div>
-                            Processing...
-                        </>
-                    ) : (
-                        <>
-                            <FiShoppingCart className="h-5 w-5" /> Buy Now
-                        </>
-                    )}
+                    <FiShoppingCart className="h-5 w-5 max-[420px]:h-3.5 max-[420px]:w-3.5" /> Checkout
                 </button>
 
                 {project.demoUrl && (
@@ -159,9 +108,9 @@ export default function ProjectSidebar({
                         href={project.demoUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center justify-center gap-2 py-3 px-4 bg-white text-gray-700 font-bold text-sm rounded-xl border-2 border-gray-200 hover:border-indigo-600 hover:text-indigo-600 active:bg-gray-50 transition-all whitespace-nowrap"
+                        className="flex-1 h-12 max-[420px]:h-10 inline-flex items-center justify-center gap-2 px-6 max-[420px]:px-2 bg-white text-gray-700 font-bold text-sm max-[420px]:text-xs rounded-xl border-2 border-gray-200 hover:border-indigo-600 hover:text-indigo-600 active:bg-gray-50 transition-all whitespace-nowrap"
                     >
-                        <FiExternalLink className="h-5 w-5" /> {isMobile ? "Live Preview" : "Preview"}
+                        <FiExternalLink className="h-5 w-5 max-[420px]:h-3.5 max-[420px]:w-3.5" /> {isMobile ? "Live Preview" : "Preview"}
                     </a>
                 )}
             </div>
@@ -182,6 +131,26 @@ export default function ProjectSidebar({
                     ))}
                 </div>
             </div>
+
+            {/* Checkout Modal */}
+            <CheckoutModal
+                isOpen={isCheckoutOpen}
+                onClose={() => setIsCheckoutOpen(false)}
+                project={project}
+                pricing={pricing}
+                couponInput={couponInput}
+                isApplyingCoupon={isApplyingCoupon}
+                appliedCouponCode={appliedCouponCode}
+                couponError={couponError}
+                isProcessing={isProcessing}
+                handleApplyCoupon={handleApplyCoupon}
+                handleClearCoupon={handleClearCoupon}
+                handleBuyNow={handleBuyNow}
+                setCouponInput={setCouponInput}
+                setCouponError={setCouponError}
+                formatPrice={formatPrice}
+                formatDate={formatDate}
+            />
         </div>
     );
 }

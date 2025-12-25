@@ -192,12 +192,12 @@ export default function ProjectDetailsPage() {
     }
 
     return (
-        <div className="min-h-screen bg-slate-50 py-8 lg:py-12 relative font-sans">
+        <div className="min-h-screen bg-slate-50 py-6 lg:py-8 relative font-sans">
             <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-[0.4] pointer-events-none invert"></div>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
                 {/* Breadcrumb / Back Link */}
-                <Link href="/projects" className="inline-flex items-center gap-2 text-gray-500 hover:text-indigo-600 font-medium mb-8 transition-colors">
+                <Link href="/projects" className="inline-flex items-center gap-2 text-gray-500 hover:text-indigo-600 font-medium mb-4 transition-colors">
                     <FiArrowLeft /> Back to Projects
                 </Link>
 
