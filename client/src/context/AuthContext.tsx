@@ -4,13 +4,7 @@ import { createContext, useContext, useState, useEffect, ReactNode } from "react
 import { useRouter } from "next/navigation";
 import { authAPI } from "@/lib/api";
 import toast from "react-hot-toast";
-
-interface User {
-    id: string;
-    name: string;
-    email: string;
-    role: string;
-}
+import { User } from "@/types";
 
 interface AuthContextType {
     user: User | null;
