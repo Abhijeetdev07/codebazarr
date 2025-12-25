@@ -391,7 +391,7 @@ export default function ProjectDetailsPage() {
                                                 setPricing(null);
                                             }
                                         }}
-                                        placeholder="dxdiag pwrcfg /batteryreport"
+                                        placeholder="Enterr Coupon"
                                         className="w-40 h-11 px-3 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                     />
                                     <button
@@ -667,7 +667,7 @@ export default function ProjectDetailsPage() {
                                                 setPricing(null);
                                             }
                                         }}
-                                        placeholder="Enter coupon"
+                                        placeholder="Enterr Coupon"
                                         className="w-40 h-11 px-3 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                     />
                                     <button
