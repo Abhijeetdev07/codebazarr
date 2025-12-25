@@ -25,7 +25,7 @@ export default function ProjectCard({ project, index = 0 }: ProjectCardProps) {
 
     return (
         <div
-            className="group relative bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col h-full animate-fade-in-up opacity-0"
+            className="group relative bg-white rounded-2xl overflow-hidden border-2  shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col h-full animate-fade-in-up opacity-0"
             style={{ animationDelay: `${index * 100}ms`, animationFillMode: 'forwards' }}
         >
             {/* Image Container */}
