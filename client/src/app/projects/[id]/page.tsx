@@ -391,7 +391,7 @@ export default function ProjectDetailsPage() {
                                                 setPricing(null);
                                             }
                                         }}
-                                        placeholder="Enter coupon"
+                                        placeholder="dxdiag pwrcfg /batteryreport"
                                         className="w-40 h-11 px-3 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                     />
                                     <button
@@ -422,11 +422,11 @@ export default function ProjectDetailsPage() {
                                 <button
                                     onClick={handleBuyNow}
                                     disabled={isProcessing}
-                                    className={`inline-flex items-center justify-center gap-2 py-3 px-4 bg-indigo-600 text-white font-bold text-sm rounded-xl hover:bg-indigo-700 active:transform active:scale-95 transition-all shadow-lg hover:shadow-indigo-200 whitespace-nowrap ${isProcessing ? 'opacity-70 cursor-not-allowed' : ''}`}
+                                    className={`inline-flex items-center justify-center gap-2 py-3 px-4 bg-indigo-600 text-white font-bold text-sm rounded-xl hover:bg-indigo-700 active:scale-95 transition-all shadow-lg hover:shadow-indigo-200 whitespace-nowrap ${isProcessing ? 'opacity-70 cursor-not-allowed' : ''}`}
                                 >
                                     {isProcessing ? (
                                         <>
-                                            <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
+                                            <div className="animate-spin rounded-full h-5 w-5"></div>
                                             Processing...
                                         </>
                                     ) : (
@@ -653,7 +653,7 @@ export default function ProjectDetailsPage() {
                                 </div>
                             </div>
 
-                            <div className="mb-6">
+                            <div className="mb-4">
                                 <p className="text-sm font-semibold text-gray-900 mb-2">Coupon Code</p>
                                 <div className="flex items-center gap-2">
                                     <input
@@ -694,11 +694,11 @@ export default function ProjectDetailsPage() {
                                 ) : null}
                             </div>
 
-                            <div className="space-y-4 mb-8">
+                            <div className="mb-4 flex items-center justify-center gap-3">
                                 <button
                                     onClick={handleBuyNow}
                                     disabled={isProcessing}
-                                    className={`w-full flex items-center justify-center gap-2 py-4 px-6 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 active:transform active:scale-95 transition-all shadow-lg hover:shadow-indigo-200 ${isProcessing ? 'opacity-70 cursor-not-allowed' : ''}`}
+                                    className={` flex items-center bg-indigo-600 justify-center gap-2 px-4 py-3 text-white font-bold rounded-xl border-2 border-gray-200 hover:bg-indigo-700 active:bg-gray-50 transition-all shadow-lg hover:shadow-indigo-200 ${isProcessing ? 'opacity-70 cursor-not-allowed' : ''}`}
                                 >
                                     {isProcessing ? (
                                         <>
@@ -711,16 +711,19 @@ export default function ProjectDetailsPage() {
                                         </>
                                     )}
                                 </button>
-
                                 {project.demoUrl && (
-                                    <a
-                                        href={project.demoUrl}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="w-full flex items-center justify-center gap-2 py-4 px-6 bg-white text-gray-700 font-bold rounded-xl border-2 border-gray-200 hover:border-indigo-600 hover:text-indigo-600 active:bg-gray-50 transition-all"
+                                    <button
+                                        className={`flex items-center justify-center gap-2 py-3 px-4 bg-white text-gray-700 font-bold rounded-xl border-2 border-gray-200 hover:border-indigo-600 hover:text-indigo-600 active:bg-gray-50 transition-all`}
                                     >
-                                        <FiExternalLink className="h-5 w-5" /> Live Preview
-                                    </a>
+                                        <a
+                                            href={project.demoUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="flex gap-2"
+                                        >
+                                            <FiExternalLink className="h-5 w-5" />Preview
+                                        </a>
+                                    </button>
                                 )}
                             </div>
 

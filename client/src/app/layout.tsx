@@ -22,8 +22,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className="antialiased">
+    <html lang="en" suppressHydrationWarning>
+      <body className="antialiased" suppressHydrationWarning>
         <Providers>
           <div className="flex flex-col min-h-screen">
             <div className="w-full bg-gradient-to-r from-indigo-700 via-indigo-600 to-fuchsia-600 text-white">
