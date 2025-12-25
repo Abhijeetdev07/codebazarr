@@ -325,7 +325,7 @@ export default function ProjectDetailsPage() {
                             )}
                         </div>
 
-                        {/* Sidebar content - Shows here on mobile/tablet only */}
+                        {/* Sidebar content - Shows here on mobile/tablet only ok*/}
                         <div className="lg:hidden">
                             <ProjectSidebar
                                 project={project}
