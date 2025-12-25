@@ -146,7 +146,7 @@ export default function Footer() {
                         &copy; {currentYear} CodeBazarr. All rights reserved.
                     </p>
                     <p className="text-xs text-gray-600 flex items-center gap-1">
-                        Made with <span className="text-red-500">♥</span> by CodeBazar Team
+                        Made with <span className="text-red-500">♥</span> by CodeBazarr Team
                     </p>
                 </div>
             </div>
