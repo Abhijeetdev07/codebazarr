@@ -1,7 +1,7 @@
 "use client";
 
 import { useAuth } from "@/context/AuthContext";
-import { FiMenu, FiBell, FiLogOut, FiUser } from "react-icons/fi";
+import { FiMenu, FiLogOut, FiUser } from "react-icons/fi";
 
 interface HeaderProps {
     onMenuClick: () => void;
@@ -25,13 +25,6 @@ export default function Header({ onMenuClick }: HeaderProps) {
             </div>
 
             <div className="flex items-center gap-4">
-                <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors relative">
-                    <FiBell className="h-5 w-5" />
-                    <span className="absolute top-2 right-2 h-2 w-2 bg-red-500 rounded-full border border-white"></span>
-                </button>
-
-                <div className="h-8 w-px bg-gray-200 mx-2 hidden sm:block"></div>
-
                 <div className="flex items-center gap-3">
                     <div className="text-right hidden sm:block">
                         <p className="text-sm font-semibold text-gray-900">{user?.name || "Admin"}</p>
