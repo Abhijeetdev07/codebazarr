@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { projectAPI, categoryAPI } from "@/lib/api";
 import { Project, Category } from "@/types";
 import ProjectCard from "@/components/ProjectCard";
+import ProjectCardSkeleton from "@/components/ProjectCardSkeleton";
 import { FiSearch, FiFilter, FiX } from "react-icons/fi";
 
 function ProjectsContent() {
@@ -236,7 +237,7 @@ function ProjectsContent() {
                         {loading ? (
                             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 justify-items-center">
                                 {[1, 2, 3, 4, 5, 6].map((i) => (
-                                    <div key={i} className="w-full min-w-[300px] max-w-[320px] h-80 bg-white rounded-2xl border border-slate-200 animate-pulse"></div>
+                                    <ProjectCardSkeleton key={i} />
                                 ))}
                             </div>
                         ) : error ? (
