@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { reviewAPI, projectAPI } from "@/lib/api";
 import { Review, User } from "@/types";
 import { FiStar } from "react-icons/fi";
-import { FaStar, FaRegStar } from "react-icons/fa";
+import { MdOutlineStar, MdStarOutline } from "react-icons/md";
 import toast from "react-hot-toast";
 
 interface ProjectReviewsProps {
@@ -129,7 +129,7 @@ export default function ProjectReviews({
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label className="block text-sm font-semibold text-gray-800 mb-2">Rating</label>
-                            <div className="flex items-center gap-1">
+                            <div className="flex items-center">
                                 {[1, 2, 3, 4, 5].map((n) => {
                                     const active = n <= reviewRating;
                                     return (
@@ -141,9 +141,9 @@ export default function ProjectReviews({
                                             aria-label={`Set rating to ${n}`}
                                         >
                                             {active ? (
-                                                <FaStar className="h-6 w-6 text-amber-500" />
+                                                <MdOutlineStar className="h-6 w-6 text-amber-500" />
                                             ) : (
-                                                <FaRegStar className="h-6 w-6 text-gray-300" />
+                                                <MdStarOutline className="h-6 w-6 text-gray-300" />
                                             )}
                                         </button>
                                     );
@@ -200,9 +200,20 @@ export default function ProjectReviews({
                         <div key={r._id} className="p-4 rounded-xl border border-gray-200">
                             <div className="flex items-center justify-between gap-4">
                                 <div className="font-semibold text-gray-900">{getReviewerName(r)}</div>
-                                <div className="flex items-center gap-1 text-gray-800">
-                                    <FiStar className="h-4 w-4 text-amber-500" />
-                                    <span className="text-sm font-semibold">{Number(r.rating).toFixed(0)}</span>
+                                <div className="flex items-center">
+                                    {[1, 2, 3, 4, 5].map((star) => (
+                                        star <= r.rating ? (
+                                            <MdOutlineStar
+                                                key={star}
+                                                className="h-4 w-4 text-amber-500"
+                                            />
+                                        ) : (
+                                            <MdStarOutline
+                                                key={star}
+                                                className="h-4 w-4 text-gray-300"
+                                            />
+                                        )
+                                    ))}
                                 </div>
                             </div>
                             {r.comment ? (

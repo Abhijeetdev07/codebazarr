@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { FiEye, FiStar } from "react-icons/fi";
+import { FiEye } from "react-icons/fi";
+import { MdOutlineStar, MdStarOutline } from "react-icons/md";
 import { Project } from "@/types";
 
 interface ProjectCardProps {
@@ -63,9 +64,22 @@ export default function ProjectCard({ project, index = 0 }: ProjectCardProps) {
                 </div>
 
                 <div className="flex items-center gap-2 mb-3">
-                    <div className="flex items-center gap-1">
-                        <FiStar className={`h-4 w-4 ${reviewCount > 0 ? 'text-amber-500' : 'text-gray-300'}`} />
-                        <span className="text-sm font-semibold text-gray-800">
+                    <div className="flex items-center ">
+                        {[1, 2, 3, 4, 5].map((star) => {
+                            const filled = star <= Math.round(avgRating);
+                            return filled ? (
+                                <MdOutlineStar
+                                    key={star}
+                                    className="h-4 w-4 text-amber-500"
+                                />
+                            ) : (
+                                <MdStarOutline
+                                    key={star}
+                                    className="h-4 w-4 text-gray-300"
+                                />
+                            );
+                        })}
+                        <span className="ml-1 text-sm font-semibold text-gray-800">
                             {reviewCount > 0 ? avgRating.toFixed(1) : '0.0'}
                         </span>
                     </div>
