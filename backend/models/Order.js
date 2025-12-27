@@ -46,6 +46,11 @@ const orderSchema = new mongoose.Schema({
     enum: ['razorpay'],
     default: 'razorpay'
   },
+  paymentMethod: {
+    type: String,
+    enum: ['upi', 'card', 'netbanking', 'wallet', 'other'],
+    default: 'other'
+  },
   razorpayOrderId: {
     type: String,
     required: function () {
@@ -77,7 +82,7 @@ orderSchema.index({ userId: 1, purchaseDate: -1 });
 orderSchema.index({ razorpayPaymentId: 1 });
 
 // Method to check if user already owns this project
-orderSchema.statics.hasUserPurchased = async function(userId, projectId) {
+orderSchema.statics.hasUserPurchased = async function (userId, projectId) {
   const order = await this.findOne({
     userId,
     projectId,

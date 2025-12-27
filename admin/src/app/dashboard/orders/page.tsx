@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { orderAPI } from "@/lib/api";
-import { FiEye, FiFilter, FiX, FiCalendar, FiUser, FiPackage, FiDollarSign } from "react-icons/fi";
+import { FiEye, FiFilter, FiX, FiCalendar, FiUser, FiPackage, FiDollarSign, FiDownload, FiPrinter, FiLoader } from "react-icons/fi";
 import toast from "react-hot-toast";
 
 interface Order {
@@ -25,6 +25,10 @@ interface Order {
     createdAt: string;
 }
 
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import Logo from "@/assets/logo.png";
+
 export default function OrdersPage() {
     const [orders, setOrders] = useState<Order[]>([]);
     const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
@@ -35,6 +39,17 @@ export default function OrdersPage() {
     // Filters
     const [statusFilter, setStatusFilter] = useState<string>("all");
     const [dateFilter, setDateFilter] = useState<string>("");
+
+    // Export Modal State
+    const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+    const [exportFilterType, setExportFilterType] = useState<string>("yearly");
+    const [exportYear, setExportYear] = useState<string>(new Date().getFullYear().toString());
+    const [exportMonth, setExportMonth] = useState<string>((new Date().getMonth() + 1).toString());
+    const [exportStartDate, setExportStartDate] = useState<string>("");
+    const [exportEndDate, setExportEndDate] = useState<string>("");
+    const [exportStatus, setExportStatus] = useState<string>("all");
+    const [isExporting, setIsExporting] = useState(false);
+    const [exportAction, setExportAction] = useState<'download' | 'print'>('download');
 
     useEffect(() => {
         fetchOrders();
@@ -54,6 +69,164 @@ export default function OrdersPage() {
             toast.error("Failed to load orders");
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleExport = async (action: 'download' | 'print' = 'download') => {
+        try {
+            setExportAction(action);
+            setIsExporting(true);
+
+            // Prepare params
+            const params: any = {
+                filterType: exportFilterType,
+                status: exportStatus
+            };
+
+            if (exportFilterType === 'yearly') {
+                params.year = exportYear;
+            } else if (exportFilterType === 'monthly') {
+                params.year = exportYear;
+                params.month = exportMonth;
+            } else if (exportFilterType === 'dateRange') {
+                if (!exportStartDate || !exportEndDate) {
+                    toast.error("Please select both start and end dates");
+                    setIsExporting(false);
+                    return;
+                }
+                params.startDate = exportStartDate;
+                params.endDate = exportEndDate;
+            }
+
+            // Fetch filtered data
+            const res = await orderAPI.export(params);
+
+            if (res.data.success) {
+                const { data, summary, filters } = res.data;
+
+                if (data.length === 0) {
+                    toast.error("No orders found for the selected filters");
+                    setIsExporting(false);
+                    return;
+                }
+
+                // Generate PDF
+                const doc = new jsPDF();
+
+                // Load Logo
+                let logoLoaded = false;
+                const logoImg = new Image();
+                if (Logo && Logo.src) {
+                    logoImg.src = Logo.src;
+                    try {
+                        await new Promise((resolve, reject) => {
+                            if (logoImg.complete) resolve(true);
+                            logoImg.onload = () => resolve(true);
+                            logoImg.onerror = () => reject(new Error("Failed to load logo"));
+                        });
+                        logoLoaded = true;
+                    } catch (err) {
+                        console.error("Logo loading failed", err);
+                    }
+                }
+
+                // Add Logo or Fallback Text
+                let startY = 20;
+                if (logoLoaded) {
+                    const logoWidth = 40;
+                    const logoHeight = (logoImg.height * logoWidth) / logoImg.width;
+                    doc.addImage(logoImg, 'PNG', 14, 15, logoWidth, logoHeight);
+                    startY = logoHeight + 25;
+                } else {
+                    doc.setFontSize(22);
+                    doc.setTextColor(79, 70, 229); // Indigo-600
+                    doc.text("CodeBazar", 14, 20);
+                    startY = 28;
+                }
+
+                doc.setFontSize(12);
+                doc.setTextColor(100);
+                doc.text("Order Report", 14, startY);
+
+                // Filter Details
+                doc.setFontSize(10);
+                doc.setTextColor(130);
+                const dateStr = new Date().toLocaleDateString();
+                doc.text(`Generated on: ${dateStr}`, 14, startY + 7);
+
+                let filterText = `Filter: ${filters.filterType.charAt(0).toUpperCase() + filters.filterType.slice(1)}`;
+                if (filters.filterType === 'yearly') filterText += ` (${filters.year})`;
+                if (filters.filterType === 'monthly') filterText += ` (${filters.month}/${filters.year})`;
+                if (filters.filterType === 'dateRange') filterText += ` (${filters.startDate} to ${filters.endDate})`;
+
+                doc.text(filterText, 14, startY + 12);
+                doc.text(`Status: ${filters.status.charAt(0).toUpperCase() + filters.status.slice(1)}`, 14, startY + 17);
+
+                // Summary Params
+                const summaryStartY = startY + 7;
+                doc.setFontSize(10);
+                doc.setTextColor(0);
+                doc.text(`Total Orders: ${summary.totalOrders}`, 150, summaryStartY);
+                doc.text(`Total Amount: Rs. ${summary.totalAmount.toLocaleString()}`, 150, summaryStartY + 5);
+
+                // Table
+                const tableColumn = ["Order ID", "Customer", "Project", "Amount", "Payment", "Date", "Status"];
+                const tableRows = data.map((order: any) => [
+                    order.orderIdShort,
+                    order.customerName,
+                    order.projectName,
+                    `Rs. ${order.amount}`,
+                    order.paymentMethod?.toUpperCase() || 'OTHER',
+                    new Date(order.date).toLocaleDateString(),
+                    order.status.toUpperCase()
+                ]);
+
+                autoTable(doc, {
+                    head: [tableColumn],
+                    body: tableRows,
+                    startY: startY + 25,
+                    theme: 'grid',
+                    showFoot: 'lastPage',
+                    headStyles: { fillColor: [79, 70, 229] },
+                    styles: { fontSize: 8 },
+                    foot: [['Total', '', '', `Rs. ${summary.totalAmount.toLocaleString()}`, '', '', `${summary.totalOrders} Orders`]],
+                    footStyles: { fillColor: [240, 240, 240], textColor: [0, 0, 0], fontStyle: 'bold' },
+                    didDrawPage: (data) => {
+                        // Watermark
+                        if (logoLoaded) {
+                            const doc = data.doc as any;
+                            const pageWidth = doc.internal.pageSize.getWidth();
+                            const pageHeight = doc.internal.pageSize.getHeight();
+                            const imgWidth = 160; // Slightly bigger logo
+                            const imgHeight = (logoImg.height * imgWidth) / logoImg.width;
+                            const angleDeg = 45;
+                            const x = (pageWidth - imgWidth) / 2 + 25; // Shifted more right
+                            const y = (pageHeight - imgHeight) / 2 + 35; // Shifted more down
+
+                            doc.saveGraphicsState();
+                            doc.setGState(new doc.GState({ opacity: 0.15 }));
+                            doc.addImage(logoImg, 'PNG', x, y, imgWidth, imgHeight, undefined, 'FAST', angleDeg);
+                            doc.restoreGraphicsState();
+                        }
+                    }
+                });
+
+                if (action === 'print') {
+                    doc.autoPrint();
+                    doc.output('dataurlnewwindow');
+                    toast.success("Print window opened");
+                } else {
+                    // Save PDF
+                    doc.save(`orders-report-${dateFilter || 'export'}.pdf`);
+                    toast.success("PDF downloaded successfully");
+                }
+                setIsExportModalOpen(false);
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error("Failed to export orders");
+        } finally {
+            setIsExporting(false);
         }
     };
 
@@ -195,9 +368,18 @@ export default function OrdersPage() {
         <div className="space-y-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <h1 className="text-2xl font-bold text-gray-900">Orders</h1>
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <span className="font-medium">{filteredOrders.length}</span>
-                    <span>of {orders.length} orders</span>
+                <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <span className="font-medium">{filteredOrders.length}</span>
+                        <span>of {orders.length} orders</span>
+                    </div>
+                    <button
+                        onClick={() => setIsExportModalOpen(true)}
+                        className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors"
+                    >
+                        <FiDownload className="h-4 w-4" />
+                        Export PDF
+                    </button>
                 </div>
             </div>
 
@@ -418,6 +600,170 @@ export default function OrdersPage() {
                                 className="px-6 py-2 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700"
                             >
                                 Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Export Modal */}
+            {isExportModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+                    <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl overflow-hidden">
+                        <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gradient-to-r from-indigo-600 to-purple-600">
+                            <h3 className="text-lg font-bold text-white">Export Orders to PDF</h3>
+                            <button onClick={() => setIsExportModalOpen(false)} className="text-white hover:text-gray-200">
+                                <FiX size={24} />
+                            </button>
+                        </div>
+
+                        <div className="p-6 space-y-6 max-h-[70vh] overflow-y-auto">
+                            {/* Filter Type Selection */}
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-900 mb-2">Filter Type</label>
+                                <select
+                                    value={exportFilterType}
+                                    onChange={(e) => setExportFilterType(e.target.value)}
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                                >
+                                    <option value="yearly">Yearly</option>
+                                    <option value="monthly">Monthly</option>
+                                    <option value="dateRange">Date Range</option>
+                                </select>
+                            </div>
+
+                            {/* Yearly Filter */}
+                            {exportFilterType === 'yearly' && (
+                                <div>
+                                    <label className="block text-sm font-semibold text-gray-900 mb-2">Year</label>
+                                    <select
+                                        value={exportYear}
+                                        onChange={(e) => setExportYear(e.target.value)}
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                                    >
+                                        {Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i).map(year => (
+                                            <option key={year} value={year}>{year}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                            )}
+
+                            {/* Monthly Filter */}
+                            {exportFilterType === 'monthly' && (
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-sm font-semibold text-gray-900 mb-2">Month</label>
+                                        <select
+                                            value={exportMonth}
+                                            onChange={(e) => setExportMonth(e.target.value)}
+                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                                        >
+                                            <option value="1">January</option>
+                                            <option value="2">February</option>
+                                            <option value="3">March</option>
+                                            <option value="4">April</option>
+                                            <option value="5">May</option>
+                                            <option value="6">June</option>
+                                            <option value="7">July</option>
+                                            <option value="8">August</option>
+                                            <option value="9">September</option>
+                                            <option value="10">October</option>
+                                            <option value="11">November</option>
+                                            <option value="12">December</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-semibold text-gray-900 mb-2">Year</label>
+                                        <select
+                                            value={exportYear}
+                                            onChange={(e) => setExportYear(e.target.value)}
+                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                                        >
+                                            {Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i).map(year => (
+                                                <option key={year} value={year}>{year}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Date Range Filter */}
+                            {exportFilterType === 'dateRange' && (
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-sm font-semibold text-gray-900 mb-2">Start Date</label>
+                                        <input
+                                            type="date"
+                                            value={exportStartDate}
+                                            onChange={(e) => setExportStartDate(e.target.value)}
+                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-semibold text-gray-900 mb-2">End Date</label>
+                                        <input
+                                            type="date"
+                                            value={exportEndDate}
+                                            onChange={(e) => setExportEndDate(e.target.value)}
+                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                                        />
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Status Filter */}
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-900 mb-2">Order Status</label>
+                                <select
+                                    value={exportStatus}
+                                    onChange={(e) => setExportStatus(e.target.value)}
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                                >
+                                    <option value="all">All Statuses</option>
+                                    <option value="completed">Completed</option>
+                                    <option value="pending">Pending</option>
+                                    <option value="failed">Failed</option>
+                                </select>
+                            </div>
+
+                            {/* Info Box */}
+                            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                                <p className="text-sm text-blue-800">
+                                    <strong>Note:</strong> The PDF will include Order ID, Customer Name, Project Name, Amount, Payment Method, Date, and Status for all filtered orders.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="px-6 py-4 border-t border-gray-100 bg-gray-50 flex flex-row justify-end gap-2">
+                            <button
+                                onClick={() => setIsExportModalOpen(false)}
+                                className="hidden sm:block px-6 py-2 bg-white text-gray-700 font-medium rounded-lg border border-gray-300 hover:bg-gray-50"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={() => handleExport('print')}
+                                disabled={isExporting || (exportFilterType === 'dateRange' && (!exportStartDate || !exportEndDate))}
+                                className={`flex-1 sm:flex-none justify-center px-4 py-2 bg-white text-gray-700 text-sm font-medium rounded-lg border border-gray-300 hover:bg-gray-50 flex items-center gap-2 ${isExporting || (exportFilterType === 'dateRange' && (!exportStartDate || !exportEndDate)) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            >
+                                {isExporting && exportAction === 'print' ? (
+                                    <FiLoader className="h-4 w-4 animate-spin" />
+                                ) : (
+                                    <FiPrinter className="h-4 w-4" />
+                                )}
+                                {isExporting && exportAction === 'print' ? 'Printing...' : 'Print'}
+                            </button>
+                            <button
+                                onClick={() => handleExport('download')}
+                                disabled={isExporting || (exportFilterType === 'dateRange' && (!exportStartDate || !exportEndDate))}
+                                className={`flex-1 sm:flex-none justify-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 flex items-center gap-2 ${isExporting || (exportFilterType === 'dateRange' && (!exportStartDate || !exportEndDate)) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            >
+                                {isExporting && exportAction === 'download' ? (
+                                    <FiLoader className="h-4 w-4 animate-spin" />
+                                ) : (
+                                    <FiDownload className="h-4 w-4" />
+                                )}
+                                {isExporting && exportAction === 'download' ? 'Download' : 'Download'}
                             </button>
                         </div>
                     </div>

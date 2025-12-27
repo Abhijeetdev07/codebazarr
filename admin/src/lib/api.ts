@@ -21,6 +21,7 @@ export const projectAPI = {
 
 export const orderAPI = {
     getAll: () => api.get<{ success: boolean, count: number, data: any[] }>('/orders'),
+    export: (params: any) => api.get<{ success: boolean, filters: any, summary: any, count: number, data: any[] }>('/orders/export', { params }),
 };
 
 export const categoryAPI = {

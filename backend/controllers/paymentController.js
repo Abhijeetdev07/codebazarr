@@ -13,6 +13,29 @@ const hash = (text) => {
     .digest('hex');
 };
 
+// Helper function to extract payment method from Razorpay payment details
+const getPaymentMethod = async (paymentId) => {
+  if (!paymentId) return 'other';
+
+  try {
+    // Fetch payment details from Razorpay
+    const payment = await razorpay.payments.fetch(paymentId);
+
+    // Map Razorpay method to our enum
+    const method = payment.method?.toLowerCase();
+
+    if (method === 'upi') return 'upi';
+    if (method === 'card') return 'card';
+    if (method === 'netbanking') return 'netbanking';
+    if (method === 'wallet') return 'wallet';
+
+    return 'other';
+  } catch (error) {
+    console.error('Error fetching payment method:', error);
+    return 'other';
+  }
+};
+
 async function consumeCouponAfterSuccess(couponIdOrDoc) {
   if (!couponIdOrDoc) return { success: true };
 
@@ -295,6 +318,11 @@ exports.verifyPayment = async (req, res) => {
     order.razorpayPaymentId = razorpay_payment_id;
     order.razorpaySignature = razorpay_signature;
     order.status = 'completed';
+
+    // Fetch and store payment method
+    const paymentMethod = await getPaymentMethod(razorpay_payment_id);
+    order.paymentMethod = paymentMethod;
+
     await order.save();
 
     if (order.couponId) {
@@ -366,15 +394,25 @@ exports.markPaymentFailed = async (req, res) => {
         return res.status(404).json({ success: false, message: 'Project not found' });
       }
 
+      // Fetch payment method if payment ID is available
+      const paymentMethod = razorpay_payment_id ? await getPaymentMethod(razorpay_payment_id) : 'other';
+
       order = await Order.create({
         userId: req.user._id,
         projectId,
         amount: project.price,
         razorpayOrderId: razorpay_order_id,
         razorpayPaymentId: razorpay_payment_id,
+        paymentMethod,
         status: 'failed'
       });
     } else {
+      // Fetch payment method if payment ID is available
+      if (razorpay_payment_id && !order.paymentMethod) {
+        const paymentMethod = await getPaymentMethod(razorpay_payment_id);
+        update.paymentMethod = paymentMethod;
+      }
+
       order = await Order.findByIdAndUpdate(order._id, update, { new: true });
     }
 
