@@ -105,6 +105,11 @@ export default function CouponsPage() {
             return;
         }
 
+        if (percentOff < 1 || percentOff > 100) {
+            toast.error("Percent off must be between 1 and 100");
+            return;
+        }
+
         setCreating(true);
         try {
             const res = await adminCouponAPI.create({
@@ -185,15 +190,15 @@ export default function CouponsPage() {
 
                     <div className="md:col-span-1">
                         <label className="block text-sm font-medium text-gray-700 mb-1">Percent Off</label>
-                        <select
-                            value={String(percentOff)}
+                        <input
+                            type="number"
+                            min="1"
+                            max="100"
+                            value={percentOff}
                             onChange={(e) => setPercentOff(Number(e.target.value))}
+                            placeholder="10"
                             className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
-                        >
-                            {[5, 10, 15, 50, 75, 90, 100].map((p) => (
-                                <option key={p} value={p}>{p}%</option>
-                            ))}
-                        </select>
+                        />
                     </div>
 
                     <div className="md:col-span-1">

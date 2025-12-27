@@ -63,7 +63,6 @@ exports.createCoupon = async (req, res) => {
     const normalizedPercentOff = Number(percentOff);
     const normalizedUsageType = typeof usageType === 'string' ? usageType.trim().toUpperCase() : undefined;
 
-    const allowedPercentOff = [5, 10, 15, 50, 75, 90, 100];
     const allowedUsageTypes = ['UNLIMITED', 'ONCE_GLOBAL'];
 
     if (!normalizedCode || percentOff === undefined || percentOff === null || Number.isNaN(normalizedPercentOff)) {
@@ -73,10 +72,10 @@ exports.createCoupon = async (req, res) => {
       });
     }
 
-    if (!allowedPercentOff.includes(normalizedPercentOff)) {
+    if (normalizedPercentOff < 1 || normalizedPercentOff > 100) {
       return res.status(400).json({
         success: false,
-        message: `Invalid percentOff. Allowed: ${allowedPercentOff.join(', ')}`
+        message: 'Invalid percentOff. Must be between 1 and 100'
       });
     }
 

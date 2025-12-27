@@ -15,7 +15,8 @@ const couponSchema = new mongoose.Schema(
         percentOff: {
             type: Number,
             required: true,
-            enum: [5, 10, 15, 50, 75, 90, 100],
+            min: 1,
+            max: 100,
         },
         scope: {
             type: String,

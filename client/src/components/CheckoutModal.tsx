@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { Project } from "@/types";
-import { FiX, FiCheck, FiCalendar, FiTag, FiCreditCard,} from "react-icons/fi";
+import { FiX, FiCheck, FiCalendar, FiTag, FiCreditCard, } from "react-icons/fi";
 import { RiShieldFlashFill } from "react-icons/ri";
 
 interface CheckoutModalProps {
@@ -107,7 +107,7 @@ export default function CheckoutModal({
                             <div className="flex justify-between text-green-600 text-sm">
                                 <span className="flex items-center gap-1">
                                     <FiTag className="h-3 w-3" />
-                                    Discount ({appliedCouponCode})
+                                    Discount - {pricing.percentOff} % OFF
                                 </span>
                                 <span className="font-medium">-{formatPrice(pricing.discountAmount)}</span>
                             </div>
