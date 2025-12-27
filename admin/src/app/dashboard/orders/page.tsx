@@ -18,6 +18,7 @@ interface Order {
         price: number;
     };
     amount: number;
+    paymentMethod?: string;
     razorpayPaymentId: string;
     razorpayOrderId: string;
     status: string;
@@ -328,7 +329,7 @@ export default function OrdersPage() {
                         <table className="w-full">
                             <thead className="bg-gray-50">
                                 <tr>
-                                    {[1, 2, 3, 4, 5, 6, 7].map((i) => (
+                                    {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
                                         <th key={i} className="px-6 py-4">
                                             <div className="h-4 bg-gray-200 rounded w-20"></div>
                                         </th>
@@ -347,9 +348,10 @@ export default function OrdersPage() {
                                         </td>
                                         <td className="px-6 py-4"><div className="h-4 bg-gray-200 rounded w-36"></div></td>
                                         <td className="px-6 py-4"><div className="h-4 bg-gray-200 rounded w-16"></div></td>
+                                        <td className="px-6 py-4"><div className="h-4 bg-gray-200 rounded w-16"></div></td>
                                         <td className="px-6 py-4"><div className="h-6 bg-gray-200 rounded w-20"></div></td>
                                         <td className="px-6 py-4"><div className="h-4 bg-gray-200 rounded w-24"></div></td>
-                                        <td className="px-6 py-4">
+                                        <td className="px-6 py-4 text-right">
                                             <div className="flex justify-end">
                                                 <div className="h-8 w-8 bg-gray-200 rounded-lg"></div>
                                             </div>
@@ -435,6 +437,7 @@ export default function OrdersPage() {
                                 <th className="px-6 py-4">Customer</th>
                                 <th className="px-6 py-4">Project</th>
                                 <th className="px-6 py-4">Amount</th>
+                                <th className="px-6 py-4">Payment Type</th>
                                 <th className="px-6 py-4">Status</th>
                                 <th className="px-6 py-4">Date</th>
                                 <th className="px-6 py-4 text-right">Actions</th>
@@ -459,6 +462,11 @@ export default function OrdersPage() {
                                         ₹{order.amount}
                                     </td>
                                     <td className="px-6 py-4">
+                                        <span className="text-xs font-medium text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                                            {order.paymentMethod?.toUpperCase() || 'N/A'}
+                                        </span>
+                                    </td>
+                                    <td className="px-6 py-4">
                                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
                                             {order.status}
                                         </span>
@@ -479,7 +487,7 @@ export default function OrdersPage() {
                             ))}
                             {filteredOrders.length === 0 && (
                                 <tr>
-                                    <td colSpan={7} className="px-6 py-12 text-center text-gray-500">
+                                    <td colSpan={8} className="px-6 py-12 text-center text-gray-500">
                                         No orders found matching your filters.
                                     </td>
                                 </tr>
@@ -582,6 +590,10 @@ export default function OrdersPage() {
                                     <h4 className="font-semibold text-gray-900">Payment Information</h4>
                                 </div>
                                 <div className="space-y-2 text-sm">
+                                    <div>
+                                        <p className="text-gray-500">Payment Method</p>
+                                        <p className="font-medium text-indigo-600 uppercase">{selectedOrder.paymentMethod || 'N/A'}</p>
+                                    </div>
                                     <div>
                                         <p className="text-gray-500">Razorpay Payment ID</p>
                                         <p className="font-mono text-xs text-gray-900 break-all">{selectedOrder.razorpayPaymentId || 'N/A'}</p>

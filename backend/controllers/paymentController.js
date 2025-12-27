@@ -21,17 +21,19 @@ const getPaymentMethod = async (paymentId) => {
     // Fetch payment details from Razorpay
     const payment = await razorpay.payments.fetch(paymentId);
 
-    // Map Razorpay method to our enum
+    // Map Razorpay method to our enum or return raw if it's new
     const method = payment.method?.toLowerCase();
 
-    if (method === 'upi') return 'upi';
-    if (method === 'card') return 'card';
-    if (method === 'netbanking') return 'netbanking';
-    if (method === 'wallet') return 'wallet';
+    // List of known methods we explicitly handle (others will just fall through if within enum)
+    const knownMethods = ['upi', 'card', 'netbanking', 'wallet', 'emi', 'bank_transfer', 'paylater'];
 
-    return 'other';
+    if (method && knownMethods.includes(method)) {
+      return method;
+    }
+
+    return method || 'other';
   } catch (error) {
-    console.error('Error fetching payment method:', error);
+    console.error('Error fetching payment method from Razorpay:', error.message);
     return 'other';
   }
 };
@@ -147,6 +149,7 @@ exports.createOrder = async (req, res) => {
         couponId: appliedCoupon ? appliedCoupon._id : null,
         couponCode: appliedCoupon ? normalizedCode : null, // Use input code
         paymentProvider: 'razorpay',
+        paymentMethod: 'free',
         status: 'completed'
       });
 
