@@ -227,6 +227,7 @@ export default function ProjectDetailsPage() {
                                                 alt={`${project.title} - Image ${index + 1}`}
                                                 fill
                                                 className="object-cover rounded-xl"
+                                                sizes="(max-width: 1024px) 100vw, 60vw"
                                                 priority={index === 0}
                                             />
                                         </div>
@@ -252,6 +253,7 @@ export default function ProjectDetailsPage() {
                                                     src={img}
                                                     alt={`Thumb ${index + 1}`}
                                                     fill
+                                                    sizes="(max-width: 640px) 96px, 128px"
                                                     className="object-cover"
                                                 />
                                             </div>
