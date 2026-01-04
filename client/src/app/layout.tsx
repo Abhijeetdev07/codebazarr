@@ -37,10 +37,10 @@ export default function RootLayout({
                   priority
                 />
                 <span className="text-xs sm:text-sm font-semibold">
-                  Up to <span className="font-bold">10% OFF</span> — Apply
+                  Up to <span className="font-bold">15% OFF</span> — Apply
                 </span>
                 <span className="text-xs sm:text-sm font-bold bg-white/20 backdrop-blur-md text-white rounded-md px-2 py-0.5">
-                  CODE10
+                  CODE15
                 </span>
                 <span className="text-xs sm:text-sm font-semibold">coupon code</span>
               </div>
