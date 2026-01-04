@@ -3,7 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
-import { FiEye, FiEyeOff, FiLock, FiMail, FiUser } from "react-icons/fi";
+import { FiArrowRight } from "react-icons/fi";
+import FloatingInput from "@/components/FloatingInput";
 
 export default function RegisterPage() {
     const [name, setName] = useState("");
@@ -11,8 +12,6 @@ export default function RegisterPage() {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-    const [showPassword, setShowPassword] = useState(false);
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [errors, setErrors] = useState<{ name?: string; email?: string; password?: string; confirmPassword?: string }>({});
     const { register } = useAuth();
 
@@ -65,166 +64,100 @@ export default function RegisterPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white px-4 py-10 sm:py-12 sm:px-6 lg:px-8">
-            <div className="mx-auto flex w-full max-w-md flex-col justify-center">
-                <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm sm:p-8">
-                    <div className="space-y-2 text-center">
-                        <h1 className="text-xl font-bold tracking-tight text-gray-900 sm:text-2xl">Create your account</h1>
-                        <p className="text-xs text-gray-600 sm:text-sm">Start buying and managing projects in minutes</p>
+        <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-indigo-50 flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
+            <div className="w-full max-w-sm space-y-8">
+                <div className="rounded-3xl border border-gray-100 bg-white p-8 shadow-2xl shadow-indigo-100/50">
+                    <div className="text-center mb-8">
+                        <h1 className="text-3xl font-bold tracking-tight text-indigo-600">Create Account</h1>
+                        <p className="mt-2 text-sm text-gray-500">Join us to start your journey</p>
                     </div>
 
-                    <form className="mt-6 space-y-4 sm:mt-8 sm:space-y-5" onSubmit={handleSubmit}>
-                        <div>
-                            <label htmlFor="name" className="block text-xs font-medium text-gray-700 sm:text-sm">
-                                Full name
-                            </label>
-                            <div className="relative mt-1.5 sm:mt-2">
-                                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-                                    <FiUser />
-                                </div>
-                                <input
-                                    id="name"
-                                    name="name"
-                                    type="text"
-                                    autoComplete="name"
-                                    className={`block w-full rounded-xl border bg-white py-2 pl-10 pr-3 text-xs text-gray-900 shadow-sm outline-none transition sm:py-2.5 sm:text-sm ${errors.name
-                                        ? "border-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-100"
-                                        : "border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
-                                        }`}
-                                    placeholder="Your full name"
-                                    value={name}
-                                    onChange={(e) => {
-                                        setName(e.target.value);
-                                        if (errors.name) setErrors((prev) => ({ ...prev, name: undefined }));
-                                    }}
-                                    aria-invalid={Boolean(errors.name)}
-                                />
-                            </div>
-                            {errors.name && <p className="mt-1.5 text-[11px] text-red-600 sm:mt-2 sm:text-xs">{errors.name}</p>}
-                        </div>
+                    <form className="space-y-6" onSubmit={handleSubmit}>
+                        <div className="space-y-5">
+                            <FloatingInput
+                                id="name"
+                                name="name"
+                                type="text"
+                                label="Full Name"
+                                value={name}
+                                onChange={(e) => {
+                                    setName(e.target.value);
+                                    if (errors.name) setErrors((prev) => ({ ...prev, name: undefined }));
+                                }}
+                                error={errors.name}
+                            />
 
-                        <div>
-                            <label htmlFor="email" className="block text-xs font-medium text-gray-700 sm:text-sm">
-                                Email
-                            </label>
-                            <div className="relative mt-1.5 sm:mt-2">
-                                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-                                    <FiMail />
-                                </div>
-                                <input
-                                    id="email"
-                                    name="email"
-                                    type="email"
-                                    autoComplete="email"
-                                    className={`block w-full rounded-xl border bg-white py-2 pl-10 pr-3 text-xs text-gray-900 shadow-sm outline-none transition sm:py-2.5 sm:text-sm ${errors.email
-                                        ? "border-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-100"
-                                        : "border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
-                                        }`}
-                                    placeholder="you@example.com"
-                                    value={email}
-                                    onChange={(e) => {
-                                        setEmail(e.target.value);
-                                        if (errors.email) setErrors((prev) => ({ ...prev, email: undefined }));
-                                    }}
-                                    aria-invalid={Boolean(errors.email)}
-                                />
-                            </div>
-                            {errors.email && <p className="mt-1.5 text-[11px] text-red-600 sm:mt-2 sm:text-xs">{errors.email}</p>}
-                        </div>
+                            <FloatingInput
+                                id="email"
+                                name="email"
+                                type="email"
+                                label="Email Address"
+                                value={email}
+                                onChange={(e) => {
+                                    setEmail(e.target.value);
+                                    if (errors.email) setErrors((prev) => ({ ...prev, email: undefined }));
+                                }}
+                                error={errors.email}
+                            />
 
-                        <div>
-                            <label htmlFor="password" className="block text-xs font-medium text-gray-700 sm:text-sm">
-                                Password
-                            </label>
-                            <div className="relative mt-1.5 sm:mt-2">
-                                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-                                    <FiLock />
-                                </div>
-                                <input
-                                    id="password"
-                                    name="password"
-                                    type={showPassword ? "text" : "password"}
-                                    autoComplete="new-password"
-                                    className={`block w-full rounded-xl border bg-white py-2 pl-10 pr-10 text-xs text-gray-900 shadow-sm outline-none transition sm:py-2.5 sm:text-sm ${errors.password
-                                        ? "border-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-100"
-                                        : "border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
-                                        }`}
-                                    placeholder="Min 6 characters"
-                                    value={password}
-                                    onChange={(e) => {
-                                        setPassword(e.target.value);
-                                        if (errors.password) setErrors((prev) => ({ ...prev, password: undefined }));
-                                    }}
-                                    aria-invalid={Boolean(errors.password)}
-                                />
-                                <button
-                                    type="button"
-                                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700"
-                                    onClick={() => setShowPassword((v) => !v)}
-                                    aria-label={showPassword ? "Hide password" : "Show password"}
-                                >
-                                    {showPassword ? <FiEyeOff /> : <FiEye />}
-                                </button>
-                            </div>
-                            {errors.password && <p className="mt-1.5 text-[11px] text-red-600 sm:mt-2 sm:text-xs">{errors.password}</p>}
-                        </div>
+                            <FloatingInput
+                                id="password"
+                                name="password"
+                                type="password"
+                                label="Password"
+                                value={password}
+                                onChange={(e) => {
+                                    setPassword(e.target.value);
+                                    if (errors.password) setErrors((prev) => ({ ...prev, password: undefined }));
+                                }}
+                                error={errors.password}
+                            />
 
-                        <div>
-                            <label htmlFor="confirmPassword" className="block text-xs font-medium text-gray-700 sm:text-sm">
-                                Confirm password
-                            </label>
-                            <div className="relative mt-1.5 sm:mt-2">
-                                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-                                    <FiLock />
-                                </div>
-                                <input
-                                    id="confirmPassword"
-                                    name="confirmPassword"
-                                    type={showConfirmPassword ? "text" : "password"}
-                                    autoComplete="new-password"
-                                    className={`block w-full rounded-xl border bg-white py-2 pl-10 pr-10 text-xs text-gray-900 shadow-sm outline-none transition sm:py-2.5 sm:text-sm ${errors.confirmPassword
-                                        ? "border-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-100"
-                                        : "border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
-                                        }`}
-                                    placeholder="Re-enter password"
-                                    value={confirmPassword}
-                                    onChange={(e) => {
-                                        setConfirmPassword(e.target.value);
-                                        if (errors.confirmPassword) {
-                                            setErrors((prev) => ({ ...prev, confirmPassword: undefined }));
-                                        }
-                                    }}
-                                    aria-invalid={Boolean(errors.confirmPassword)}
-                                />
-                                <button
-                                    type="button"
-                                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700"
-                                    onClick={() => setShowConfirmPassword((v) => !v)}
-                                    aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
-                                >
-                                    {showConfirmPassword ? <FiEyeOff /> : <FiEye />}
-                                </button>
-                            </div>
-                            {errors.confirmPassword && (
-                                <p className="mt-1.5 text-[11px] text-red-600 sm:mt-2 sm:text-xs">{errors.confirmPassword}</p>
-                            )}
+                            <FloatingInput
+                                id="confirmPassword"
+                                name="confirmPassword"
+                                type="password"
+                                label="Confirm Password"
+                                value={confirmPassword}
+                                onChange={(e) => {
+                                    setConfirmPassword(e.target.value);
+                                    if (errors.confirmPassword) {
+                                        setErrors((prev) => ({ ...prev, confirmPassword: undefined }));
+                                    }
+                                }}
+                                error={errors.confirmPassword}
+                            />
                         </div>
-
-                        <p className="text-left text-xs text-gray-600 sm:text-sm">
-                            Already have an account?{" "}
-                            <Link href="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
-                                Sign in
-                            </Link>
-                        </p>
 
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="flex w-full items-center justify-center rounded-xl bg-indigo-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:cursor-not-allowed disabled:opacity-50 sm:py-2.5 sm:text-sm"
+                            className="group flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-3 text-sm font-bold text-white shadow-lg shadow-indigo-200 transition-all hover:bg-indigo-700 hover:shadow-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70"
                         >
-                            {isLoading ? "Creating account..." : "Sign up"}
+                            {isLoading ? (
+                                <span className="flex items-center gap-2">
+                                    <svg className="h-5 w-5 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    Creating Account...
+                                </span>
+                            ) : (
+                                <>
+                                    <FiArrowRight className="h-5 w-5" /> Sign Up
+                                </>
+                            )}
                         </button>
                     </form>
+
+                    <div className="mt-6 text-center text-sm">
+                        <p className="text-gray-500">
+                            Already have an account?{" "}
+                            <Link href="/login" className="font-bold text-indigo-600 transition-colors hover:text-indigo-500 hover:underline">
+                                Sign in
+                            </Link>
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
