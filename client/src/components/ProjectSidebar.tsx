@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { FiShoppingCart, FiExternalLink, FiLayers, FiCalendar } from "react-icons/fi";
+import { FiLayers, FiCalendar } from "react-icons/fi";
 import { MdOutlineStar, MdStarOutline } from "react-icons/md";
 import { Project } from "@/types";
 import CheckoutModal from "./CheckoutModal";
+import ProjectActions from "./ProjectActions";
 
 interface ProjectSidebarProps {
     project: Project;
@@ -53,7 +54,7 @@ export default function ProjectSidebar({
     const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
 
     return (
-        <div className={`bg-white rounded-2xl shadow-sm border border-gray-100 ${isMobile ? 'p-6' : 'p-6 md:p-8'}`}>
+        <div className={`bg-white rounded-2xl shadow-sm border border-gray-100 ${isMobile ? 'p-6 max-[500px]:pb-24' : 'p-6 md:p-8'}`}>
             <span className="inline-block px-3 py-1 bg-indigo-50 text-indigo-700 text-xs font-bold uppercase tracking-wider rounded-full mb-4">
                 {project.category?.name || "Uncategorized"}
             </span>
@@ -109,25 +110,12 @@ export default function ProjectSidebar({
 
             {/* Coupon UI removed from here, moving to Modal */}
 
-            <div className={`flex items-center gap-3 w-full ${isMobile ? 'mb-8' : 'mb-8'}`}>
-                <button
-                    onClick={() => setIsCheckoutOpen(true)}
-                    className="flex-1 h-12 max-[420px]:h-10 inline-flex items-center justify-center gap-2 px-6 max-[420px]:px-2 bg-indigo-600 text-white font-bold text-sm max-[420px]:text-xs rounded-xl hover:bg-indigo-700 active:scale-95 transition-all shadow-lg hover:shadow-indigo-200 whitespace-nowrap"
-                >
-                    <FiShoppingCart className="h-5 w-5 max-[420px]:h-3.5 max-[420px]:w-3.5" /> Checkout
-                </button>
-
-                {project.demoUrl && (
-                    <a
-                        href={project.demoUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex-1 h-12 max-[420px]:h-10 inline-flex items-center justify-center gap-2 px-6 max-[420px]:px-2 bg-white text-gray-700 font-bold text-sm max-[420px]:text-xs rounded-xl border-2 border-gray-200 hover:border-indigo-600 hover:text-indigo-600 active:bg-gray-50 transition-all whitespace-nowrap"
-                    >
-                        <FiExternalLink className="h-5 w-5 max-[420px]:h-3.5 max-[420px]:w-3.5" /> {isMobile ? "Live Preview" : "Preview"}
-                    </a>
-                )}
-            </div>
+            {/* Actions Component */}
+            <ProjectActions
+                onCheckoutClick={() => setIsCheckoutOpen(true)}
+                demoUrl={project.demoUrl}
+                isMobile={isMobile}
+            />
 
             {/* Technologies */}
             <div>
