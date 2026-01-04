@@ -83,7 +83,7 @@ export default function HeroSlider() {
                     modules={[Autoplay, Pagination, EffectFade]}
                     className="mySwiper w-full h-full"
                 >
-                    {banners.map((banner) => (
+                    {banners.map((banner, index) => (
                         <SwiperSlide key={banner._id}>
                             <Link href="/projects" className="relative w-full h-full block">
                                 {/* Background Image */}
@@ -93,7 +93,7 @@ export default function HeroSlider() {
                                         alt={banner.title}
                                         fill
                                         className="object-cover"
-                                        priority
+                                        priority={index === 0}
                                     />
                                 </div>
                             </Link>
