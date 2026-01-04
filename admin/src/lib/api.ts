@@ -54,3 +54,7 @@ export const adminCouponAPI = {
     toggle: (id: string) => api.patch<{ success: boolean, message?: string, data: any }>(`/admin/coupons/${id}/toggle`),
     delete: (id: string) => api.delete<{ success: boolean }>(`/admin/coupons/${id}`),
 };
+
+export const aiAPI = {
+    generateDescription: (data: any) => api.post<{ success: boolean, description: string }>('/admin/ai/generate-description', data),
+};

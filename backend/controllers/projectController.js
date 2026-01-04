@@ -232,8 +232,8 @@ exports.createProject = async (req, res) => {
     if (typeof projectData.technologies === 'string') {
       projectData.technologies = JSON.parse(projectData.technologies);
     }
-    if (typeof projectData.features === 'string') {
-      projectData.features = JSON.parse(projectData.features);
+    if (typeof projectData.technologies === 'string') {
+      projectData.technologies = JSON.parse(projectData.technologies);
     }
 
     // Validate required fields
@@ -329,17 +329,13 @@ exports.updateProject = async (req, res) => {
     if (updateData['technologies[]'] !== undefined && updateData.technologies === undefined) {
       updateData.technologies = normalizeToArray(updateData['technologies[]']);
     }
-    if (updateData['features[]'] !== undefined && updateData.features === undefined) {
-      updateData.features = normalizeToArray(updateData['features[]']);
-    }
     delete updateData['technologies[]'];
-    delete updateData['features[]'];
 
     if (typeof updateData.technologies === 'string') {
       updateData.technologies = JSON.parse(updateData.technologies);
     }
-    if (typeof updateData.features === 'string') {
-      updateData.features = JSON.parse(updateData.features);
+    if (typeof updateData.technologies === 'string') {
+      updateData.technologies = JSON.parse(updateData.technologies);
     }
 
     const project = await Project.findByIdAndUpdate(

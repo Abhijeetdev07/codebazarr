@@ -53,10 +53,7 @@ const projectSchema = new mongoose.Schema({
     type: String,
     trim: true
   }],
-  features: [{
-    type: String,
-    trim: true
-  }],
+
   isActive: {
     type: Boolean,
     default: true
@@ -72,11 +69,11 @@ const projectSchema = new mongoose.Schema({
 });
 
 // Update the updatedAt timestamp before saving
-projectSchema.pre('save', async function() {
+projectSchema.pre('save', async function () {
   this.updatedAt = Date.now();
 });
 
-projectSchema.statics.recalculateRating = async function(projectId) {
+projectSchema.statics.recalculateRating = async function (projectId) {
   const Review = mongoose.model('Review');
 
   const stats = await Review.aggregate([
@@ -92,21 +89,21 @@ projectSchema.statics.recalculateRating = async function(projectId) {
 
   const update = stats.length
     ? {
-        avgRating: Math.round(stats[0].avgRating * 10) / 10,
-        reviewCount: stats[0].reviewCount
-      }
+      avgRating: Math.round(stats[0].avgRating * 10) / 10,
+      reviewCount: stats[0].reviewCount
+    }
     : { avgRating: 0, reviewCount: 0 };
 
   await this.findByIdAndUpdate(projectId, update, { new: false });
 };
 
 // Update the updatedAt timestamp before updating
-projectSchema.pre('findOneAndUpdate', async function() {
+projectSchema.pre('findOneAndUpdate', async function () {
   this.set({ updatedAt: Date.now() });
 });
 
 // Virtual for formatted price
-projectSchema.virtual('formattedPrice').get(function() {
+projectSchema.virtual('formattedPrice').get(function () {
   const price = typeof this.price === 'number' ? this.price : 0;
   return `$${price.toFixed(2)}`;
 });

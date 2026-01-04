@@ -286,22 +286,7 @@ export default function ProjectDetailsPage() {
                             />
                         </div>
 
-                        {/* Features List */}
-                        {project.features && project.features.length > 0 && (
-                            <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100">
-                                <h2 className="text-2xl font-bold text-gray-900 mb-6">Key Features</h2>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    {project.features.map((feature, index) => (
-                                        <div key={index} className="flex items-start gap-3">
-                                            <div className="mt-1 h-5 w-5 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 text-green-600">
-                                                <FiCheck className="h-3 w-3" />
-                                            </div>
-                                            <span className="text-gray-700">{feature}</span>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
+
 
                         {/* Description & Details */}
                         <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100">

@@ -59,6 +59,7 @@ app.use('/api/orders', require('./routes/orders'));
 app.use('/api/reviews', require('./routes/reviews'));
 app.use('/api/admin/coupons', require('./routes/adminCoupons'));
 app.use('/api/coupons', require('./routes/coupons'));
+app.use('/api/admin/ai', require('./routes/ai'));
 
 // Error handling middleware
 app.use(require('./middleware/error'));

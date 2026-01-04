@@ -2,8 +2,8 @@
 
 import { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
-import { projectAPI, categoryAPI } from "@/lib/api";
-import { FiUpload, FiX, FiPlus, FiTrash2, FiSave, FiArrowLeft } from "react-icons/fi";
+import { projectAPI, categoryAPI, aiAPI } from "@/lib/api";
+import { FiUpload, FiX, FiPlus, FiTrash2, FiSave, FiArrowLeft, FiCpu, FiLoader } from "react-icons/fi";
 import toast from "react-hot-toast";
 import Image from "next/image";
 
@@ -17,6 +17,7 @@ export default function EditProjectPage({ params }: PageProps) {
     const router = useRouter();
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
+    const [isGenerating, setIsGenerating] = useState(false);
     const [categories, setCategories] = useState<any[]>([]);
 
     // Form State
@@ -27,7 +28,6 @@ export default function EditProjectPage({ params }: PageProps) {
     const [demoUrl, setDemoUrl] = useState("");
     const [sourceCodeUrl, setSourceCodeUrl] = useState("");
     const [technologies, setTechnologies] = useState<string[]>([]);
-    const [features, setFeatures] = useState<string[]>([""]);
     const [existingImages, setExistingImages] = useState<string[]>([]);
     const [selectedImages, setSelectedImages] = useState<File[]>([]);
     const [imagePreviews, setImagePreviews] = useState<string[]>([]);
@@ -56,7 +56,6 @@ export default function EditProjectPage({ params }: PageProps) {
                     setDemoUrl(project.demoUrl || "");
                     setSourceCodeUrl(project.sourceCodeUrl || "");
                     setTechnologies(project.technologies || []);
-                    setFeatures(project.features && project.features.length > 0 ? project.features : [""]);
                     setExistingImages(project.images || []);
                 }
             } catch (error) {
@@ -105,18 +104,34 @@ export default function EditProjectPage({ params }: PageProps) {
         setTechnologies(technologies.filter(t => t !== tech));
     };
 
-    const updateFeature = (index: number, value: string) => {
-        const newFeatures = [...features];
-        newFeatures[index] = value;
-        setFeatures(newFeatures);
-    };
 
-    const addFeature = () => {
-        setFeatures([...features, ""]);
-    };
 
-    const removeFeature = (index: number) => {
-        setFeatures(features.filter((_, i) => i !== index));
+    const handleAiEnhance = async () => {
+        if (!title || !category || !price) {
+            toast.error("Please fill in Title, Category and Price first");
+            return;
+        }
+
+        setIsGenerating(true);
+        try {
+            const response = await aiAPI.generateDescription({
+                title,
+                category: categories.find(c => c._id === category)?.name || "Software",
+                price,
+                technologies
+            });
+
+            if (response.data.success) {
+                setDescription(response.data.description);
+                toast.success("Description enhanced with AI!");
+            }
+        } catch (error: any) {
+            console.error("AI Generation failed:", error);
+            const msg = error.response?.data?.message || "Failed to generate description";
+            toast.error(msg);
+        } finally {
+            setIsGenerating(false);
+        }
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -133,7 +148,6 @@ export default function EditProjectPage({ params }: PageProps) {
             formData.append("sourceCodeUrl", sourceCodeUrl);
 
             technologies.forEach(tech => formData.append("technologies[]", tech));
-            features.filter(f => f.trim()).forEach(feature => formData.append("features[]", feature));
 
             // Handle existing images - send as string URLs
             existingImages.forEach(img => formData.append("existingImages[]", img));
@@ -222,6 +236,21 @@ export default function EditProjectPage({ params }: PageProps) {
                                 onChange={e => setDescription(e.target.value)}
                                 className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
                             />
+                            <div className="flex justify-end mt-2">
+                                <button
+                                    type="button"
+                                    onClick={handleAiEnhance}
+                                    disabled={isGenerating}
+                                    className="flex items-center gap-2 bg-indigo-600 text-white px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-indigo-700 transition disabled:opacity-50"
+                                >
+                                    {isGenerating ? (
+                                        <FiLoader className="animate-spin" />
+                                    ) : (
+                                        <FiCpu />
+                                    )}
+                                    Enhance with AI
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -326,36 +355,6 @@ export default function EditProjectPage({ params }: PageProps) {
                                     </span>
                                 ))}
                             </div>
-                        </div>
-
-                        <div className="col-span-2 space-y-2">
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Features List</label>
-                            {features.map((feature, index) => (
-                                <div key={index} className="flex gap-2">
-                                    <input
-                                        type="text"
-                                        value={feature}
-                                        onChange={e => updateFeature(index, e.target.value)}
-                                        className="flex-1 px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
-                                    />
-                                    {features.length > 1 && (
-                                        <button
-                                            type="button"
-                                            onClick={() => removeFeature(index)}
-                                            className="p-2 text-red-500 hover:bg-red-50 rounded-lg"
-                                        >
-                                            <FiTrash2 className="h-5 w-5" />
-                                        </button>
-                                    )}
-                                </div>
-                            ))}
-                            <button
-                                type="button"
-                                onClick={addFeature}
-                                className="text-sm text-indigo-600 font-medium hover:text-indigo-700 flex items-center gap-1"
-                            >
-                                <FiPlus /> Add Another Feature
-                            </button>
                         </div>
                     </div>
                 </div>
